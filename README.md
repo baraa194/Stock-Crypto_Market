@@ -1,118 +1,120 @@
-# Stock-Crypto_Market
-📈 Stock_Crypto_Market
+# 📈 Stock-Crypto Market
 
-A backend trading platform built with Spring Boot that simulates a real-time stock and cryptocurrency market.
-Users can register, trade assets, manage their portfolio, and receive instant notifications after each transaction.
+A backend trading platform built with **Spring Boot** that simulates a real-time stock and cryptocurrency market.
 
-🔐 Authentication & Security
+The system allows users to register, authenticate securely, trade assets, manage their portfolio, and receive real-time notifications after each transaction.
 
-User Registration & Login system
+---
 
-Secured using JWT (JSON Web Token)
+## 🔐 Authentication & Security
 
-Role-based authorization
+- User Registration & Login
+- JWT (JSON Web Token) based authentication
+- Role-Based Authorization
+- Stateless Security Architecture
+- Secure REST APIs
 
-Stateless authentication for better scalability and security
+---
 
-💼 Core Features
-👤 User Portfolio
+## 💼 Core Features
 
-Each user has a dedicated portfolio
+### 👤 User Portfolio
+- Each user has a dedicated portfolio
+- Users can:
+  - Buy assets
+  - Sell assets
+  - Track owned quantities
+- Automatic balance updates after every trade
 
-Users can:
+---
 
-Buy assets
+### 💳 Wallet System
+- Every user has a virtual wallet
+- Balance updates automatically after:
+  - Buying assets
+  - Selling assets
+- Updated balance is included in trade notifications
 
-Sell assets
+---
 
-Track owned quantities
+### 📊 Asset Management
+The platform supports multiple asset types:
 
-Every transaction updates the user’s balance automatically
+- 📈 Stocks  
+- 💰 Cryptocurrencies  
 
-📊 Assets Management
+Admin capabilities:
+- Add new assets
+- Define asset type
+- Set initial price
+- Manage available assets in the system
 
-Support for:
+---
 
-📈 Stocks
+### ⚡ Real-Time Market Simulation
+- Asset prices update dynamically
+- Simulates real-world market fluctuations
+- Ensures transactional consistency during buy/sell operations
+- Real-time data handling for accurate trading simulation
 
-💰 Cryptocurrencies
+---
 
-Admin can:
-
-Add new assets
-
-Set initial prices
-
-Define asset type
-
-Asset prices are dynamic and continuously changing
-
-⚡ Real-Time Market Simulation
-
-Prices update dynamically to simulate real market behavior
-
-Ensures real-time data handling
-
-Maintains transactional consistency during buy/sell operations
-
-🔔 Notification System
+### 🔔 Notification System
 
 After every successful trade:
 
-The user receives a notification
+- A notification is sent to the user
+- Includes:
+  - Trade confirmation
+  - Asset name
+  - Executed price
+  - Updated wallet balance
 
-Notification includes:
+This guarantees transparency and instant feedback for every transaction.
 
-Trade confirmation
+---
 
-Asset name
+## 🏗️ System Architecture
 
-Executed price
+- Event-Driven Architecture for trade execution
+- Scheduled jobs for dynamic price updates
+- RESTful APIs
+- Layered architecture (Controller - Service - Repository)
 
-Updated balance
+---
 
-This ensures transparency and instant feedback for every operation.
+## 🛠️ Tech Stack
 
-💳 Wallet System
+- Java
+- Spring Boot
+- Spring Security
+- JWT
+- JPA / Hibernate
+- REST APIs
+- Scheduled Tasks
+- Event Listeners
 
-Each user has a virtual wallet
+---
 
-Balance updates automatically after:
+## 🎯 Project Objective
 
-Buying assets
+This project demonstrates:
 
-Selling assets
+- Secure authentication with JWT
+- Real-time data processing
+- Transaction management
+- Portfolio & wallet handling
+- Event-driven notification system
 
-Users are notified with their updated balance after each trade
+---
 
-🛠️ Tech Stack
+## 🚀 Future Improvements
 
-Java
+- WebSocket for real-time price streaming
+- Admin dashboard
+- Advanced trade analytics
+- Performance optimization for high trading volume
 
-Spring Boot
+---
 
-Spring Security
-
-JWT Authentication
-
-JPA / Hibernate
-
-REST APIs
-
-Scheduled Tasks (for price updates)
-
-Event-Driven Architecture (for trade notifications)
-
-🚀 Project Goal
-
-To simulate a simplified financial trading platform that demonstrates:
-
-Secure authentication
-
-Real-time data handling
-
-Transaction management
-
-Event-driven notifications
-
-Portfolio & wallet management
+⭐ Feel free to explore, contribute, or suggest improvements!
