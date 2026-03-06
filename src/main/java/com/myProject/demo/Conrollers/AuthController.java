@@ -1,6 +1,7 @@
 package com.myProject.demo.Conrollers;
 
 import com.myProject.demo.DTO.LoginDTO;
+import com.myProject.demo.DTO.RegisterRequest;
 import com.myProject.demo.Models.User;
 import com.myProject.demo.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,8 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    public void Register(@RequestBody User user){
-        userService.register(user);
+    public void Register(@RequestBody RegisterRequest regreq){
+        userService.register(regreq);
         System.out.println("Register Success");
     }
 

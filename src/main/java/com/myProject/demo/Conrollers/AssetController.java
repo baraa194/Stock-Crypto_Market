@@ -17,9 +17,13 @@ public class AssetController {
     private AssetService assetService;
 
      @PostMapping("/add")
-    public void AddAsset(@RequestBody AssetDTO assetdto)
+    public AssetDTO AddAsset(@RequestBody AssetDTO assetdto)
      {
+         System.out.println("Add Asset first");
          assetService.AddAsset(assetdto);
+         System.out.println("Add Asset Success");
+         return assetdto;
+
      }
      @PutMapping("/edit/{id}")
      public AssetDTO updateAsset(@RequestBody AssetUpdateDTO assetdto,@PathVariable Long id)

@@ -33,25 +33,21 @@ public class User {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
-    @JsonIgnore
+
     private Role role;
 
 
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
     private List<Trade> trades;
 
     @OneToOne(fetch = FetchType.LAZY,mappedBy = "user")
-    @JsonIgnore
     private Wallet wallet;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
-     private List<AuditLog> auditLogs;
+    private List<AuditLog> auditLogs;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
     private List<Portfolio>  portfolios;
 
 

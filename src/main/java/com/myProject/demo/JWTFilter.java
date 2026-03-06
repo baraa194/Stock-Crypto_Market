@@ -16,40 +16,60 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
 @Component
 public class JWTFilter extends OncePerRequestFilter {
+
     @Autowired
     JWTService jwtservice;
+
     @Autowired
     ApplicationContext context;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        //Bearer l;wjeflhiweghfgbwuebujgweug
-        String authHeader=request.getHeader("Authorization");
-        String token=null;
-        String username=null;
-        if(authHeader!=null&&authHeader.startsWith("Bearer ")){
-            token=authHeader.substring(7);
-            username=jwtservice.extractUserName(token);
-        }
-        // check if usernmae not null and user not authenticated
-        if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
 
-            UserDetails userdetails=context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
 
-            if(jwtservice.validateToken(token,userdetails))
-            {
-                UsernamePasswordAuthenticationToken authtoken= new UsernamePasswordAuthenticationToken
-                        (userdetails,null,userdetails.getAuthorities());
-                authtoken.setDetails(new WebAuthenticationDetailsSource()
-                        .buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authtoken);
+        String authHeader = request.getHeader("Authorization");
+        System.out.println(" Auth Header: " + authHeader);
+
+        if(authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            System.out.println(" Token: " + token);
+
+            try {
+                String username = jwtservice.extractUserName(token);
+                String role = jwtservice.extractRole(token);
+
+                System.out.println("اليوزر من الـ Token: " + username);
+                System.out.println("الـ Role من الـ Token: " + role);
+
+                if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                    UserDetails userdetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(username);
+
+
+                    if(jwtservice.validateToken(token, userdetails)) {
+                        UsernamePasswordAuthenticationToken authtoken =
+                                new UsernamePasswordAuthenticationToken(userdetails, null, userdetails.getAuthorities());
+                        authtoken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authtoken);
+
+                    } else {
+                        System.out.println("token invalid");
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("❌error: " + e.getMessage());
+                e.printStackTrace();
             }
+        } else {
+            System.out.println("no token in Header");
         }
+
+
         filterChain.doFilter(request, response);
-
     }
-
 }

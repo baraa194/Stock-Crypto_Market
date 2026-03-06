@@ -66,10 +66,10 @@ public class PortfolioService {
      return response;
 
    }
-    @Caching(evict = {
-            @CacheEvict(value = "portfolios", key = "#id"),
-            @CacheEvict(value = "portfoliosList", allEntries = true)
-    })
+   @Caching(evict = {
+          @CacheEvict(value = "portfolios", key = "#id"),
+           @CacheEvict(value = "portfoliosList", allEntries = true)
+   })
     public PortfolioResponse updatePortfolio(Long id, PortfolioRequest request) {
         Portfolio portfolio = portfolioRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Portfolio not found"));
@@ -132,7 +132,7 @@ public class PortfolioService {
 
     @Caching(evict = {
             @CacheEvict(value = "portfolios", key = "#id"),
-            @CacheEvict(value = "portfoliosList", allEntries = true)
+           @CacheEvict(value = "portfoliosList", allEntries = true)
     })
     public void deletePortfolio(Long id) {
         Portfolio portfolio = portfolioRepo.findById(id)

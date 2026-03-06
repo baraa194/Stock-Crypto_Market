@@ -22,7 +22,9 @@ public interface AssetPriceRepo extends JpaRepository<AssetPrice, Long> {
     @Query("select new com.myProject.demo.DTO.AssetPriceRequest (ap.price,ap.asset.name)" +
             " from AssetPrice ap ")
     List<AssetPriceRequest> findAllPrices();
-
+    @Query("select new com.myProject.demo.DTO.AssetPriceResponse(ap.price, ap.recordedAt, ap.asset.name) " +
+            "from AssetPrice ap where ap.asset.name = :assetname order by ap.recordedAt desc")
+    AssetPriceResponse findTopByAssetname(@Param("assetname") String assetname);
 
 
 

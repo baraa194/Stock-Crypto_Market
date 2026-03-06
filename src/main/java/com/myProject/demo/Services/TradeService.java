@@ -167,7 +167,7 @@ public class TradeService {
 
 
     @Transactional
-    @CacheEvict(value = {
+   @CacheEvict(value = {
             "buytrades",
             "selltrades",
             "portfolios",

@@ -23,22 +23,24 @@ public class AssetService {
 
     @Cacheable("assets")
     public List<AssetDTO> findAll() {
-        return assetRepo.findAllAssets();
+        List<AssetDTO> result = assetRepo.findAllAssets();
+        System.out.println("Assets count: " + result.size());
+        return result;
     }
-    @Cacheable(value = "assetbyid", key = "#id")
+    @CacheEvict(value = {"assets", "assetbyid"}, allEntries = true)
       public AssetDTO findbyId(Long id)
       {
           Asset asset = assetRepo.findById(id).get();
           return modelMapper.map(asset, AssetDTO.class);
       }
-      public void AddAsset(AssetDTO assetdto)
-      {
-        Asset asset=modelMapper.map(assetdto,Asset.class);
-        asset.setName(asset.getName().trim().toUpperCase());
-        assetRepo.save(asset);
-          System.out.println("Asset added successfully");
 
-      }
+    @CacheEvict(value = "assets", allEntries = true)
+    public AssetDTO AddAsset(AssetDTO assetdto) {
+        Asset asset = modelMapper.map(assetdto, Asset.class);
+        asset.setName(asset.getName().trim().toUpperCase());
+        Asset saved = assetRepo.save(asset);
+        return modelMapper.map(saved, AssetDTO.class);
+    }
     @CacheEvict(value="assets", allEntries=true)
       public AssetDTO updateAsset(AssetUpdateDTO assetdto, Long id)
       {

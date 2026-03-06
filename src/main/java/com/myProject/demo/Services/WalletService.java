@@ -61,7 +61,7 @@ public class WalletService {
         walletrepo.save(walletfromdb);
         return modelMapper.map(walletfromdb, WalletResponse.class);
     }
-    @Cacheable(value="wallets",key="#id")
+   @Cacheable(value="wallets",key="#id")
     public WalletResponse getWalletById(Long id)
     {
         return modelMapper.map(walletrepo.findById(id).get(), WalletResponse.class);
@@ -73,9 +73,9 @@ public class WalletService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "wallets", key = "#id"),
-            @CacheEvict(value = "walletsList", allEntries = true)
-    })
+           @CacheEvict(value = "wallets", key = "#id"),
+           @CacheEvict(value = "walletsList", allEntries = true)
+   })
     public void deleteWalletById(Long id)
     {
         walletrepo.deleteById(id);

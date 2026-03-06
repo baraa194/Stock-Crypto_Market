@@ -21,7 +21,7 @@ public class WalletController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addWallet(@RequestBody WalletRequest walletRequest) {
-        System.out.println("HELLO");
+
 
         walletService.AddWallet(walletRequest);
         return ResponseEntity.ok("Wallet added successfully");
