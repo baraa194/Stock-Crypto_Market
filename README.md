@@ -1,119 +1,107 @@
 # 📈 Stock-Crypto Market
 
-A backend trading platform built with **Spring Boot** that simulates a real-time stock and cryptocurrency market.
-
-The system allows users to register, authenticate securely, trade assets, manage their portfolio, and receive real-time notifications after each transaction.
+A backend trading platform built with **Spring Boot** that simulates a real-time **stock and cryptocurrency market**.
+Users can securely authenticate, trade assets, manage their portfolio, and receive notifications after each transaction.
 
 ---
 
 ## 🔐 Authentication & Security
 
-- User Registration & Login
-- JWT (JSON Web Token) based authentication
-- Role-Based Authorization
-- Stateless Security Architecture
-- Secure REST APIs
+* JWT-based authentication
+* Role-based authorization (Admin / User)
+* Stateless security architecture
+* Secure REST APIs
 
 ---
 
 ## 💼 Core Features
 
-### 👤 User Portfolio
-- Each user has a dedicated portfolio
-- Users can:
-  - Buy assets
-  - Sell assets
-  - Track owned quantities
-- Automatic balance updates after every trade
+### 👤 Portfolio Management
+
+* Each user has a dedicated portfolio
+* Users can buy and sell assets
+* Portfolio automatically updates owned quantities
+* **PnL (Profit & Loss) calculated after every trade**
+* **Total PnL tracked across all trades**
 
 ---
 
 ### 💳 Wallet System
-- Every user has a virtual wallet
-- Balance updates automatically after:
-  - Buying assets
-  - Selling assets
-- Updated balance is included in trade notifications
+
+* Every user has a virtual wallet
+* Balance updates automatically after buy/sell operations
+* Updated balance included in trade notifications
 
 ---
 
 ### 📊 Asset Management
-The platform supports multiple asset types:
 
-- 📈 Stocks  
-- 💰 Cryptocurrencies  
+Supports multiple asset types:
+
+* 📈 Stocks
+* 💰 Cryptocurrencies
 
 Admin capabilities:
-- Add new assets
-- Define asset type
-- Set initial price
-- Manage available assets in the system
+
+* Add new assets
+* Define asset type
+* Set initial price
+* Manage available assets
 
 ---
 
-### ⚡ Real-Time Market Simulation
-- Asset prices update dynamically
-- Simulates real-world market fluctuations
-- Ensures transactional consistency during buy/sell operations
-- Real-time data handling for accurate trading simulation
+### ⚡ Market Simulation
+
+* Dynamic price updates using scheduled tasks
+* Simulates real-world market fluctuations
+* Ensures transactional consistency during trading
 
 ---
 
 ### 🔔 Notification System
 
-After every successful trade:
+After every successful trade, users receive a notification containing:
 
-- A notification is sent to the user
-- Includes:
-  - Trade confirmation
-  - Asset name
-  - Executed price
-  - Updated wallet balance
-
-This guarantees transparency and instant feedback for every transaction.
+* Trade confirmation
+* Asset name
+* Executed price
+* Updated wallet balance
 
 ---
 
-## 🏗️ System Architecture
+## ⚡ Performance Optimization
 
-- Event-Driven Architecture for trade execution
-- Scheduled jobs for dynamic price updates
-- RESTful APIs
-- Layered architecture (Controller - Service - Repository)
+* **Redis Caching** used to improve performance and reduce database load.
+
+---
+
+## 🏗️ Architecture
+
+* Event-driven architecture for trade execution
+* Scheduled jobs for price updates
+* Layered architecture (Controller → Service → Repository)
 
 ---
 
 ## 🛠️ Tech Stack
 
-- Java
-- Spring Boot
-- Spring Security
-- JWT
-- JPA / Hibernate
-- REST APIs
-- Scheduled Tasks
-- Event Listeners
-
----
-
-## 🎯 Project Objective
-
-This project demonstrates:
-
-- Secure authentication with JWT
-- Real-time data processing
-- Transaction management
-- Portfolio & wallet handling
-- Event-driven notification system
+* Java
+* Spring Boot
+* Spring Security
+* JWT
+* JPA / Hibernate
+* Redis
+* REST APIs
+* Scheduled Tasks
+* Event Listeners
 
 ---
 
 ## 🚀 Future Improvements
 
-- WebSocket for real-time price streaming
-- Admin dashboard
-- Advanced trade analytics
-- Performance optimization for high trading volume
+* WebSocket for real-time price streaming
+* Admin dashboard
+* Advanced trade analytics
 
 ---
 
