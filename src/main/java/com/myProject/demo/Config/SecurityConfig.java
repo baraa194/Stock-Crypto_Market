@@ -1,6 +1,6 @@
 package com.myProject.demo.Config;
 
-import com.myProject.demo.JWTFilter;
+import com.myProject.demo.filters.JWTFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +33,8 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/portfolios/**", "/assets/**", "/wallets/**").hasRole("ADMIN")
+                        .requestMatchers("/portfolios/**", "/assets/**", "/wallets/**")
+                        .hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
 

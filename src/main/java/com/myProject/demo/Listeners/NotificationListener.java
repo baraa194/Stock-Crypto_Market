@@ -4,6 +4,7 @@ import com.myProject.demo.Events.TradeExecutedEvent;
 import com.myProject.demo.Models.Wallet;
 import com.myProject.demo.Repositories.WalletRepo;
 import com.myProject.demo.Services.NotificationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -14,6 +15,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @Async
+@Slf4j
 public class NotificationListener {
 
     @Autowired
@@ -33,7 +35,7 @@ public class NotificationListener {
        Wallet wallet= walletRepo.findByUserUsername(event.getUsername());
         notificationService.sendWalletupdate(event.getUsername(), wallet.getBalance().toString());
 
-        System.out.println("Your Balance : "+ wallet.getBalance());
+       log.info("user Balance : ${} ",wallet.getBalance());
     }
 
 

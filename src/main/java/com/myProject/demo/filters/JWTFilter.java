@@ -1,4 +1,4 @@
-package com.myProject.demo;
+package com.myProject.demo.filters;
 
 import com.myProject.demo.Services.JWTService;
 import com.myProject.demo.Services.MyUserDetailsService;
@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class JWTFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -33,18 +35,18 @@ public class JWTFilter extends OncePerRequestFilter {
 
 
         String authHeader = request.getHeader("Authorization");
-        System.out.println(" Auth Header: " + authHeader);
+        log.info(" Auth Header: ${} " , authHeader);
 
         if(authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            System.out.println(" Token: " + token);
+            log.info(" Token: ${}" , token);
 
             try {
                 String username = jwtservice.extractUserName(token);
                 String role = jwtservice.extractRole(token);
 
-                System.out.println("اليوزر من الـ Token: " + username);
-                System.out.println("الـ Role من الـ Token: " + role);
+                log.info(" Token of user: ${}" ,username);
+                log.info("The role from token is ${} " , role);
 
                 if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 

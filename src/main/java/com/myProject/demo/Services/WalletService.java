@@ -2,6 +2,7 @@ package com.myProject.demo.Services;
 
 import com.myProject.demo.DTO.WalletRequest;
 import com.myProject.demo.DTO.WalletResponse;
+import com.myProject.demo.Exceptions.UserNotFoundException;
 import com.myProject.demo.Models.User;
 import com.myProject.demo.Models.Wallet;
 import com.myProject.demo.Repositories.UserRepo;
@@ -33,27 +34,26 @@ public class WalletService {
 
 
 
-    @CacheEvict(value="wallets", allEntries=true)
+   // @CacheEvict(value="wallets", allEntries=true)
     public void AddWallet(WalletRequest walletRequest)
     {
         log.info("searching on user " );
         User user=userrepo.findById(walletRequest.getUser_id())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         log.info("the user {} is found ",user.getUsername() );
       Wallet wallet=  modelMapper.map(walletRequest, Wallet.class);
       wallet.setUser(user);
       walletrepo.save(wallet);
 
-        System.out.println("Wallet Added Successfully");
 
     }
-    @CachePut(value="wallets",key="#id")
+    //@CachePut(value="wallets",key="#id")
     public WalletResponse updateWallet(WalletRequest walletRequest,Long id)
     {
         Wallet walletfromdb=walletrepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
         User userfromdb=userrepo.findById(walletRequest.getUser_id())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         walletfromdb.setBalance(walletRequest.getBalance());
         walletfromdb.setCurrency(walletRequest.getCurrency());
         walletfromdb.setUser(userfromdb);
@@ -61,25 +61,25 @@ public class WalletService {
         walletrepo.save(walletfromdb);
         return modelMapper.map(walletfromdb, WalletResponse.class);
     }
-   @Cacheable(value="wallets",key="#id")
+  // @Cacheable(value="wallets",key="#id")
     public WalletResponse getWalletById(Long id)
     {
         return modelMapper.map(walletrepo.findById(id).get(), WalletResponse.class);
     }
-    @Cacheable("walletsList")
+    //@Cacheable("walletsList")
     public List<WalletResponse> getallWallets()
     {
         return walletrepo.findAllWallets();
     }
 
-    @Caching(evict = {
+   /* @Caching(evict = {
            @CacheEvict(value = "wallets", key = "#id"),
            @CacheEvict(value = "walletsList", allEntries = true)
-   })
+   })*/
     public void deleteWalletById(Long id)
     {
         walletrepo.deleteById(id);
-        System.out.println("Wallet Deleted Successfully");
+        log.info("Wallet with id ${} Deleted Successfully",id);
     }
 
 

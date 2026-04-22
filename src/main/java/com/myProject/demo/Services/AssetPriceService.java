@@ -2,6 +2,7 @@ package com.myProject.demo.Services;
 
 import com.myProject.demo.DTO.AssetPriceRequest;
 import com.myProject.demo.DTO.AssetPriceResponse;
+import com.myProject.demo.Exceptions.AssetNotFoundException;
 import com.myProject.demo.Models.Asset;
 import com.myProject.demo.Models.AssetPrice;
 import com.myProject.demo.Repositories.AssetPriceRepo;
@@ -25,11 +26,11 @@ public class AssetPriceService {
     @Autowired
     private  ModelMapper modelMapper;
 
-    @CacheEvict(value="assets", allEntries=true)
+    //@CacheEvict(value="assets", allEntries=true)
     public AssetPriceResponse AddAssetPrice(AssetPriceRequest assetPriceRequest) {
 
         Asset asset=assetRepo.findAssetByName(assetPriceRequest.getAssetName().toUpperCase())
-                .orElseThrow(() -> new RuntimeException("Asset not found"));
+                .orElseThrow(() -> new AssetNotFoundException("Asset not found"));
 
         AssetPrice assetprice=new AssetPrice();
         assetprice.setPrice(assetPriceRequest.getPrice());
@@ -42,7 +43,7 @@ public class AssetPriceService {
 
             return modelMapper.map(assetprice,AssetPriceResponse.class);
     }
-  @Cacheable(value="assets",key="#assetname")
+ // @Cacheable(value="assets",key="#assetname")
     public List<AssetPriceResponse> findAssetPricesByAssetname(String assetname ) {
 
         if (assetname == null || assetname.trim().isEmpty()) {

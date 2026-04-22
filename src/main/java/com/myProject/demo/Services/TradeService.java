@@ -3,13 +3,16 @@ package com.myProject.demo.Services;
 import com.myProject.demo.DTO.*;
 import com.myProject.demo.Enums.TradeType;
 import com.myProject.demo.Events.TradeExecutedEvent;
+import com.myProject.demo.Exceptions.*;
 import com.myProject.demo.Models.*;
 import com.myProject.demo.Repositories.*;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,7 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-
+@Slf4j
 public class TradeService {
     @Autowired
     private TradeRepo tradeRepo;
@@ -42,21 +45,26 @@ public class TradeService {
     }
 
     @Transactional
-     @CacheEvict(value = {
+    /* @CacheEvict(value = {
              "buytrades",
              "selltrades",
              "portfolios",
              "portfoliosList"
-     }, allEntries = true)
+     }, allEntries = true)*/
 
      public void CreateBuyingTrade(BuyTradeRequest tradereq) {
+        log.info("Starting BUY trade for user={} asset={} quantity={}",
+                tradereq.getUsername(),
+                tradereq.getAssetName(),
+                tradereq.getQuantity());
          // get all objs from db
         User userfromdb= userRepo.findByusername(tradereq.getUsername())
-                .orElseThrow(()->new RuntimeException("Username not found"));
+                .orElseThrow(()->new UserNotFoundException("User not found"));
         Asset assetfromdb=assetRepo.findAssetByName(tradereq.getAssetName())
-                .orElseThrow(()->new RuntimeException("Asset name not found"));
+                .orElseThrow(()->new AssetNotFoundException("Asset not found"));
         Portfolio portfoliofromdb=portfolioRepo.findById(tradereq.getPortfolioId())
-                .orElseThrow(()->new RuntimeException("Portfolio id not found"));
+                .orElseThrow(()->new PortfolioNotFoundException("Portfolio not found"));
+
 
         // update wallet ,trade
         if(tradereq.getQuantity().compareTo(BigDecimal.ZERO)>0)
@@ -74,19 +82,23 @@ public class TradeService {
             trade.setUser(userfromdb);
             trade.setTotal_amount(totalcost);
             trade.setType(TradeType.BUY);
+            log.info("Calculated total cost={} for quantity={} at price={}",
+                    totalcost,
+                    tradereq.getQuantity(),
+                    assetcurrentprice);
 
-
-
-
-
+            log.info("User wallet balance before trade={}", userwallet.getBalance());
             if(userwallet.getBalance().compareTo(totalcost) >=0)
             {
+
              userwallet.setBalance(userwallet.getBalance().subtract(totalcost));
              userwallet.setUpdatedAt(LocalDateTime.now());
                 walletRepo.save(userwallet);
+                log.info("Wallet updated. New balance={}", userwallet.getBalance());
             }
             else{
-                throw new RuntimeException("Insufficient balance");
+                throw new InsufficientFundsException("Insufficient Funds");
+
             }
             // update portfolio items
             Optional<PortfolioItem> existingitem= portfoliofromdb.getPortfolioItems().stream()
@@ -108,6 +120,9 @@ public class TradeService {
                 //tradeRepo.save(trade);
 
                 portfolioItemRepo.save(portfolioitem);
+                log.info("Adding new asset to portfolio asset={} quantity={}",
+                        assetfromdb.getName(),
+                        tradereq.getQuantity());
             }
             else{
                 BigDecimal oldQty   = existingitem.get().getQuantity();
@@ -126,7 +141,10 @@ public class TradeService {
                // tradeRepo.save(trade);
                 // publish the event
 
-
+                log.info("Updating existing portfolio item asset={} oldQty={} newQty={}",
+                        assetfromdb.getName(),
+                        oldQty,
+                        totalQty);
                 portfoliofromdb.setTotalPNL(
                         portfoliofromdb.getTotalPNL().add(pnl)
                 );
@@ -136,9 +154,9 @@ public class TradeService {
 
             portfolioRepo.save(portfoliofromdb);
             Trade trade2=tradeRepo.save(trade);
-            System.out.println("\n=== 🔔 PUBLISHING TRADE EVENT ===");
-            System.out.println("Trade ID: " + trade2.getId());
-            System.out.println("Trade saved successfully in DB: " + trade2.getId());
+            log.info("\n=== 🔔 PUBLISHING TRADE EVENT ===");
+            log.info("Trade ID:{} " , trade2.getId());
+            log.info("Trade saved successfully in DB:${} " ,trade2.getId());
             TradeExecutedEvent event = new TradeExecutedEvent(
                     trade2.getId(),
                     trade2.getPrice_at_trade(),
@@ -154,35 +172,34 @@ public class TradeService {
             publisher.publishEvent(event);
         }
         else {
-            throw new RuntimeException("Invalid request");
+            throw new InvalidTradeException("Invalid Trade");
         }
 
-
-
-
-
-         System.out.println("Trade is Success");
     }
 
 
 
     @Transactional
-   @CacheEvict(value = {
+   /*@CacheEvict(value = {
             "buytrades",
             "selltrades",
             "portfolios",
-            "portfoliosList"
-    }, allEntries = true)
+            "portfoliosList"}, allEntries = true)*/
 public void CreatesellingTrade(SellTradeRequest tradereq) {
-    User userfromdb= userRepo.findByusername(tradereq.getUsername())
-            .orElseThrow(()->new RuntimeException("Username not found"));
-    Asset assetfromdb=assetRepo.findAssetByName(tradereq.getAssetName())
-            .orElseThrow(()->new RuntimeException("Asset name not found"));
-    Portfolio portfoliofromdb=portfolioRepo.findById(tradereq.getPortfolioId())
-            .orElseThrow(()->new RuntimeException("Portfolio id not found"));
+        log.info("Starting SELL trade: user={} asset={} portfolioId={} quantity={}",
+                tradereq.getUsername(),
+                tradereq.getAssetName(),
+                tradereq.getPortfolioId(),
+                tradereq.getQuantity());
+        User userfromdb= userRepo.findByusername(tradereq.getUsername())
+                .orElseThrow(()->new UserNotFoundException("User not found"));
+        Asset assetfromdb=assetRepo.findAssetByName(tradereq.getAssetName())
+                .orElseThrow(()->new AssetNotFoundException("Asset not found"));
+        Portfolio portfoliofromdb=portfolioRepo.findById(tradereq.getPortfolioId())
+                .orElseThrow(()->new PortfolioNotFoundException("Portfolio not found"));
     PortfolioItem portfolioitem=portfoliofromdb.getPortfolioItems().stream()
             .filter(i->i.getAsset().getName().equals(tradereq.getAssetName()))
-            .findFirst().orElseThrow(() -> new RuntimeException("Asset not found in portfolio"));
+            .findFirst().orElseThrow(() -> new AssetNotFoundException("Asset not found in portfolio"));
 
      if(tradereq.getQuantity().compareTo(BigDecimal.ZERO)>0 &&
      tradereq.getQuantity().compareTo(portfolioitem.getQuantity()) <=0)
@@ -190,12 +207,22 @@ public void CreatesellingTrade(SellTradeRequest tradereq) {
          Wallet userwallet= walletRepo.findByUserUsername(tradereq.getUsername());
          BigDecimal assetcurrentprice=assetfromdb.getCurrentPrice();
          BigDecimal totalcost=assetcurrentprice.multiply(tradereq.getQuantity());
+         log.info("Calculated sell total amount={} using currentPrice={} for quantity={}",
+                 totalcost,
+                 assetcurrentprice,
+                 tradereq.getQuantity());
          userwallet.setBalance(userwallet.getBalance().add(totalcost));
          userwallet.setUpdatedAt(LocalDateTime.now());
          walletRepo.save(userwallet);
-
+         log.info("Wallet updated for user={}. New balance={}",
+                 userfromdb.getUsername(),
+                 userwallet.getBalance());
          BigDecimal realizedPNL=(tradereq.getPrice_at_trade().subtract(portfolioitem.getAverage_buy_price()))
                  .multiply(tradereq.getQuantity());
+         log.info("Calculated realized PNL={} for user={} asset={}",
+                 realizedPNL,
+                 userfromdb.getUsername(),
+                 assetfromdb.getName());
          // add to total pnl
          portfoliofromdb.setTotalPNL(portfoliofromdb.getTotalPNL().add(realizedPNL));
          Trade trade=new Trade();
@@ -215,12 +242,18 @@ public void CreatesellingTrade(SellTradeRequest tradereq) {
          if(tradereq.getQuantity().compareTo(portfolioitem.getQuantity())==0)
          {
            portfoliofromdb.getPortfolioItems().remove(portfolioitem);
+             log.info("Selling full quantity of asset={} from portfolioId={}. Removing portfolio item.",
+                     assetfromdb.getName(),
+                     portfoliofromdb.getId());
 
          }
          else {
              portfolioitem.setQuantity(portfolioitem.getQuantity().subtract(tradereq.getQuantity()));
              portfolioitem.setUpdated_at(LocalDateTime.now());
-
+             log.info("Updating portfolio item for asset={} in portfolioId={}. Remaining quantity={}",
+                     assetfromdb.getName(),
+                     portfoliofromdb.getId(),
+                     portfolioitem.getQuantity().subtract(tradereq.getQuantity()));
              portfolioRepo.save(portfoliofromdb);
          }
          portfolioRepo.save(portfoliofromdb);
@@ -237,26 +270,24 @@ public void CreatesellingTrade(SellTradeRequest tradereq) {
                  LocalDateTime.now()
 
          );
-
+         log.info("SELL trade saved successfully with tradeId={}", trade2.getId());
          publisher.publishEvent(event);
 
      }
-
-
      else  {
-         throw new RuntimeException("Invalid quantity");
+         throw new InvalidTradeQuantityException ("Quantity exceeds available amount");
+
      }
 
-    System.out.println("Trade Successfully created");
 
 
 }
-@Cacheable(value="buytrades",key="#portfolioid + '_' + #type")
+//@Cacheable(value="buytrades",key="#portfolioid + '_' + #type")
 public List<BuyTradeResponse> getBuytradesbyportfolioId(Long portfolioid,TradeType type) {
        return tradeRepo.findBuytradesByPortfolioId(portfolioid,type);
 
 }
-    @Cacheable(value="selltrades",key="#portfolioid + '_' + #type")
+   // @Cacheable(value="selltrades",key="#portfolioid + '_' + #type")
 public List<SellTradeResponse> getSelltradesbyPrtfolioId(Long portfolioid,TradeType type) {
 
 List<Trade> trades=tradeRepo.findTradesByPortfolioAndType(portfolioid,type);

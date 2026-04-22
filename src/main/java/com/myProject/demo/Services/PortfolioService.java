@@ -3,6 +3,9 @@ package com.myProject.demo.Services;
 import com.myProject.demo.DTO.PortfolioItemResponse;
 import com.myProject.demo.DTO.PortfolioRequest;
 import com.myProject.demo.DTO.PortfolioResponse;
+import com.myProject.demo.Exceptions.AssetNotFoundException;
+import com.myProject.demo.Exceptions.PortfolioNotFoundException;
+import com.myProject.demo.Exceptions.UserNotFoundException;
 import com.myProject.demo.Models.Asset;
 import com.myProject.demo.Models.Portfolio;
 import com.myProject.demo.Models.PortfolioItem;
@@ -46,10 +49,10 @@ public class PortfolioService {
     private ModelMapper modelMapper;
 
 
-    @CacheEvict(value="portfolios",allEntries = true)
+   // @CacheEvict(value="portfolios",allEntries = true)
    public PortfolioResponse CreatePortfolio(PortfolioRequest portfReq){
        User user=userRepo.findByusername(portfReq.getUsername())
-               .orElseThrow(() -> new RuntimeException("user not found"));
+               .orElseThrow(() -> new UserNotFoundException("user not found"));
 
        Portfolio portf=new Portfolio();
        portf.setUser(user);
@@ -66,20 +69,20 @@ public class PortfolioService {
      return response;
 
    }
-   @Caching(evict = {
-          @CacheEvict(value = "portfolios", key = "#id"),
-           @CacheEvict(value = "portfoliosList", allEntries = true)
-   })
+  // @Caching(evict = {
+         // @CacheEvict(value = "portfolios", key = "#id"),
+         //  @CacheEvict(value = "portfoliosList", allEntries = true)
+  // })
     public PortfolioResponse updatePortfolio(Long id, PortfolioRequest request) {
         Portfolio portfolio = portfolioRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Portfolio not found"));
+                .orElseThrow(() -> new PortfolioNotFoundException("Portfolio not found"));
 
 
         itemRepo.deleteAll(portfolio.getPortfolioItems());
 
         List<PortfolioItem> items = request.getItems().stream().map(itemReq -> {
             Asset asset = assetRepo.findAssetByName(itemReq.getAssetname())
-                    .orElseThrow(() -> new RuntimeException("Asset not found: " + itemReq.getAssetname()));
+                    .orElseThrow(() -> new AssetNotFoundException("Asset not found: " + itemReq.getAssetname()));
             PortfolioItem item = new PortfolioItem();
             item.setPortfolio(portfolio);
             item.setAsset(asset);
@@ -95,16 +98,16 @@ public class PortfolioService {
         return modelMapper.map(portfolio, PortfolioResponse.class);
     }
 
-    @Cacheable("portfoliosList")
+    //@Cacheable("portfoliosList")
     public List<PortfolioResponse> getAllPortfolios() {
         return portfolioRepo.findAll().stream()
                 .map(p -> modelMapper.map(p, PortfolioResponse.class))
                 .collect(Collectors.toList());
     }
-    @Cacheable(value="portfolios",key="#username")
+    //@Cacheable(value="portfolios",key="#username")
     public PortfolioResponse getPortfolioByUsername(String username) {
         Portfolio portfolio = portfolioRepo.findByUserUsername(username)
-                .orElseThrow(() -> new RuntimeException("Portfolio not found for user"));
+                .orElseThrow(() -> new PortfolioNotFoundException("Portfolio not found for user"));
 
 
         PortfolioResponse response = new PortfolioResponse();
@@ -130,13 +133,13 @@ public class PortfolioService {
         return response;
     }
 
-    @Caching(evict = {
+   /* @Caching(evict = {
             @CacheEvict(value = "portfolios", key = "#id"),
            @CacheEvict(value = "portfoliosList", allEntries = true)
-    })
+    })*/
     public void deletePortfolio(Long id) {
         Portfolio portfolio = portfolioRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Portfolio not found"));
+                .orElseThrow(() -> new PortfolioNotFoundException("Portfolio not found"));
         portfolioRepo.delete(portfolio);
     }
 

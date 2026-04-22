@@ -2,9 +2,11 @@ package com.myProject.demo.Conrollers;
 
 import com.myProject.demo.DTO.AssetDTO;
 import com.myProject.demo.DTO.AssetUpdateDTO;
+import com.myProject.demo.Exceptions.AssetNotFoundException;
 import com.myProject.demo.Repositories.AssetRepo;
 import com.myProject.demo.Services.AssetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,23 +19,24 @@ public class AssetController {
     private AssetService assetService;
 
      @PostMapping("/add")
-    public AssetDTO AddAsset(@RequestBody AssetDTO assetdto)
+    public ResponseEntity<AssetDTO> AddAsset(@RequestBody AssetDTO assetdto)
      {
-         System.out.println("Add Asset first");
          assetService.AddAsset(assetdto);
-         System.out.println("Add Asset Success");
-         return assetdto;
+         return ResponseEntity.ok().body(assetdto);
 
      }
      @PutMapping("/edit/{id}")
-     public AssetDTO updateAsset(@RequestBody AssetUpdateDTO assetdto,@PathVariable Long id)
+     public ResponseEntity<AssetDTO>updateAsset(@RequestBody AssetUpdateDTO assetdto,@PathVariable Long id)
      {
-         return  assetService.updateAsset(assetdto,id);
+         AssetDTO asset=  assetService.updateAsset(assetdto,id);
+         return ResponseEntity.ok().body(asset);
+
      }
      @GetMapping("/{id}")
-     public AssetDTO findAssetById(@PathVariable Long id)
+     public ResponseEntity<AssetDTO> findAssetById(@PathVariable Long id)
      {
-       return assetService.findbyId(id);
+       AssetDTO asset = assetService.findbyId(id);
+         return ResponseEntity.ok().body(asset);
      }
      @GetMapping("/getall")
     public List<AssetDTO> findAllAssets()

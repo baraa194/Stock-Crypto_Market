@@ -1,5 +1,6 @@
 package com.myProject.demo.Services;
 
+import com.myProject.demo.Exceptions.UserNotFoundException;
 import com.myProject.demo.Models.User;
 import com.myProject.demo.Models.UserPrinciple;
 import com.myProject.demo.Repositories.UserRepo;
@@ -20,7 +21,7 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
        User user= userRepo.findByusername(username)
-               .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+               .orElseThrow(() -> new UserNotFoundException("User not found"));
         user.getRole().getName();
 
         return new UserPrinciple(user); // user principle is the user who try to log in
