@@ -48,8 +48,7 @@ public class PortfolioService {
     @Autowired
     private ModelMapper modelMapper;
 
-
-   // @CacheEvict(value="portfolios",allEntries = true)
+    @CacheEvict(value="portfolios",allEntries = true)
    public PortfolioResponse CreatePortfolio(PortfolioRequest portfReq){
        User user=userRepo.findByusername(portfReq.getUsername())
                .orElseThrow(() -> new UserNotFoundException("user not found"));
@@ -69,10 +68,10 @@ public class PortfolioService {
      return response;
 
    }
-  // @Caching(evict = {
-         // @CacheEvict(value = "portfolios", key = "#id"),
-         //  @CacheEvict(value = "portfoliosList", allEntries = true)
-  // })
+  @Caching(evict = {
+         @CacheEvict(value = "portfolios", key = "#id"),
+           @CacheEvict(value = "portfoliosList", allEntries = true)
+   })
     public PortfolioResponse updatePortfolio(Long id, PortfolioRequest request) {
         Portfolio portfolio = portfolioRepo.findById(id)
                 .orElseThrow(() -> new PortfolioNotFoundException("Portfolio not found"));
@@ -98,13 +97,13 @@ public class PortfolioService {
         return modelMapper.map(portfolio, PortfolioResponse.class);
     }
 
-    //@Cacheable("portfoliosList")
+    @Cacheable("portfoliosList")
     public List<PortfolioResponse> getAllPortfolios() {
         return portfolioRepo.findAll().stream()
                 .map(p -> modelMapper.map(p, PortfolioResponse.class))
                 .collect(Collectors.toList());
     }
-    //@Cacheable(value="portfolios",key="#username")
+    @Cacheable(value="portfolios",key="#username")
     public PortfolioResponse getPortfolioByUsername(String username) {
         Portfolio portfolio = portfolioRepo.findByUserUsername(username)
                 .orElseThrow(() -> new PortfolioNotFoundException("Portfolio not found for user"));
@@ -133,10 +132,10 @@ public class PortfolioService {
         return response;
     }
 
-   /* @Caching(evict = {
+    @Caching(evict = {
             @CacheEvict(value = "portfolios", key = "#id"),
            @CacheEvict(value = "portfoliosList", allEntries = true)
-    })*/
+    })
     public void deletePortfolio(Long id) {
         Portfolio portfolio = portfolioRepo.findById(id)
                 .orElseThrow(() -> new PortfolioNotFoundException("Portfolio not found"));

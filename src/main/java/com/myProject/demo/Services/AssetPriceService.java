@@ -26,7 +26,7 @@ public class AssetPriceService {
     @Autowired
     private  ModelMapper modelMapper;
 
-    //@CacheEvict(value="assets", allEntries=true)
+    @CacheEvict(value="assets", allEntries=true)
     public AssetPriceResponse AddAssetPrice(AssetPriceRequest assetPriceRequest) {
 
         Asset asset=assetRepo.findAssetByName(assetPriceRequest.getAssetName().toUpperCase())
@@ -43,7 +43,7 @@ public class AssetPriceService {
 
             return modelMapper.map(assetprice,AssetPriceResponse.class);
     }
- // @Cacheable(value="assets",key="#assetname")
+  @Cacheable(value="assets",key="#assetname")
     public List<AssetPriceResponse> findAssetPricesByAssetname(String assetname ) {
 
         if (assetname == null || assetname.trim().isEmpty()) {

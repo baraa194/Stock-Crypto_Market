@@ -45,12 +45,12 @@ public class TradeService {
     }
 
     @Transactional
-    /* @CacheEvict(value = {
+    @CacheEvict(value = {
              "buytrades",
              "selltrades",
              "portfolios",
              "portfoliosList"
-     }, allEntries = true)*/
+     }, allEntries = true)
 
      public void CreateBuyingTrade(BuyTradeRequest tradereq) {
         log.info("Starting BUY trade for user={} asset={} quantity={}",
@@ -180,11 +180,11 @@ public class TradeService {
 
 
     @Transactional
-   /*@CacheEvict(value = {
+   @CacheEvict(value = {
             "buytrades",
             "selltrades",
             "portfolios",
-            "portfoliosList"}, allEntries = true)*/
+            "portfoliosList"}, allEntries = true)
 public void CreatesellingTrade(SellTradeRequest tradereq) {
         log.info("Starting SELL trade: user={} asset={} portfolioId={} quantity={}",
                 tradereq.getUsername(),
@@ -282,12 +282,12 @@ public void CreatesellingTrade(SellTradeRequest tradereq) {
 
 
 }
-//@Cacheable(value="buytrades",key="#portfolioid + '_' + #type")
+@Cacheable(value="buytrades",key="#portfolioid + '_' + #type")
 public List<BuyTradeResponse> getBuytradesbyportfolioId(Long portfolioid,TradeType type) {
        return tradeRepo.findBuytradesByPortfolioId(portfolioid,type);
 
 }
-   // @Cacheable(value="selltrades",key="#portfolioid + '_' + #type")
+    @Cacheable(value="selltrades",key="#portfolioid + '_' + #type")
 public List<SellTradeResponse> getSelltradesbyPrtfolioId(Long portfolioid,TradeType type) {
 
 List<Trade> trades=tradeRepo.findTradesByPortfolioAndType(portfolioid,type);
