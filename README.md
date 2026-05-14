@@ -2,6 +2,7 @@
 
 A backend trading platform built with **Spring Boot** that simulates a real-time **stock and cryptocurrency market**.
 Users can securely authenticate, trade assets, manage their portfolio, and receive notifications after each transaction.
+The project also includes unit testing for core services and a global exception handling mechanism to keep API responses consistent and maintainable.
 
 ---
 
@@ -73,6 +74,15 @@ After every successful trade, users receive a notification containing:
 
 * **Redis Caching** used to improve performance and reduce database load.
 
+
+---
+## ✅ Testing & Error Handling
+
+* Unit Testing implemented for service layer business logic
+* Repository queries tested to ensure correct data retrieval
+* Global Exception Handler used for centralized error handling
+* Custom exceptions for clear and consistent API responses
+  
 ---
 
 ## 🏗️ Architecture
@@ -94,6 +104,9 @@ After every successful trade, users receive a notification containing:
 * REST APIs
 * Scheduled Tasks
 * Event Listeners
+* JUnit
+* Mockito
+* Global Exception Handling
 
 ---
 
