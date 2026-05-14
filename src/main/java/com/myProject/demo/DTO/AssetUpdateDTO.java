@@ -4,6 +4,7 @@ import com.myProject.demo.Enums.AssetType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,9 +14,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AssetUpdateDTO {
-    //private Long id;
+    @NotBlank(message = "name cannot be empty")
     private String name;
     private String symbol;
     private AssetType type;
-   // private BigDecimal currentPrice;
+
 }

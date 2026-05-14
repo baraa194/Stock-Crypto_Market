@@ -7,6 +7,7 @@ import com.myProject.demo.DTO.SellTradeResponse;
 import com.myProject.demo.Enums.TradeType;
 import com.myProject.demo.Repositories.TradeRepo;
 import com.myProject.demo.Services.TradeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,14 +23,14 @@ public class TradeController {
     private TradeRepo tradeRepo;
 
     @PostMapping("/buy")
-    public ResponseEntity<String> SaveBuying (@RequestBody BuyTradeRequest tradeRequest  )
+    public ResponseEntity<String> SaveBuying (@Valid @RequestBody BuyTradeRequest tradeRequest  )
     {
         tradeService.CreateBuyingTrade(tradeRequest);
         return ResponseEntity.ok("Trade added successfully");
     }
 
     @PostMapping("/sell")
-    public ResponseEntity<String> Saveselling (@RequestBody SellTradeRequest tradeRequest  )
+    public ResponseEntity<String> Saveselling (@Valid @RequestBody SellTradeRequest tradeRequest  )
     {
         tradeService.CreatesellingTrade(tradeRequest);
         return ResponseEntity.ok("Trade added successfully");

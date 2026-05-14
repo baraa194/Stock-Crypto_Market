@@ -57,5 +57,10 @@ public class AssetService {
 
       }
 
+      public void deleteAsset(Long id)
+      {
+          assetRepo.deleteById(id);
+      }
+
 
 }

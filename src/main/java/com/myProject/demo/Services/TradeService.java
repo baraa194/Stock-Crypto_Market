@@ -25,22 +25,28 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class TradeService {
-    @Autowired
-    private TradeRepo tradeRepo;
-    @Autowired
-    private PortfolioRepo portfolioRepo;
-    @Autowired
-    private UserRepo userRepo;
-    @Autowired
-    private AssetRepo assetRepo;
-    @Autowired
-    private WalletRepo walletRepo;
-    @Autowired
-    private PortfolioItemRepo portfolioItemRepo;
-
+    private final TradeRepo tradeRepo;
+    private final PortfolioRepo portfolioRepo;
+    private final UserRepo userRepo;
+    private final AssetRepo assetRepo;
+    private final WalletRepo walletRepo;
+    private final PortfolioItemRepo portfolioItemRepo;
     private final ApplicationEventPublisher publisher;
-
-    public TradeService(ApplicationEventPublisher publisher) {
+    public TradeService(
+            TradeRepo tradeRepo,
+            PortfolioRepo portfolioRepo,
+            UserRepo userRepo,
+            AssetRepo assetRepo,
+            WalletRepo walletRepo,
+            PortfolioItemRepo portfolioItemRepo,
+            ApplicationEventPublisher publisher
+    ) {
+        this.tradeRepo = tradeRepo;
+        this.portfolioRepo = portfolioRepo;
+        this.userRepo = userRepo;
+        this.assetRepo = assetRepo;
+        this.walletRepo = walletRepo;
+        this.portfolioItemRepo = portfolioItemRepo;
         this.publisher = publisher;
     }
 
@@ -154,7 +160,7 @@ public class TradeService {
 
             portfolioRepo.save(portfoliofromdb);
             Trade trade2=tradeRepo.save(trade);
-            log.info("\n=== 🔔 PUBLISHING TRADE EVENT ===");
+            log.info("🔔 PUBLISHING TRADE EVENT ");
             log.info("Trade ID:{} " , trade2.getId());
             log.info("Trade saved successfully in DB:${} " ,trade2.getId());
             TradeExecutedEvent event = new TradeExecutedEvent(

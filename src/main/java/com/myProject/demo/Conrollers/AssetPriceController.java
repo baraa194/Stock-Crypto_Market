@@ -4,6 +4,7 @@ package com.myProject.demo.Conrollers;
 import com.myProject.demo.DTO.AssetPriceRequest;
 import com.myProject.demo.DTO.AssetPriceResponse;
 import com.myProject.demo.Services.AssetPriceService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class AssetPriceController {
     private AssetPriceService assetPriceService;
 
     @PostMapping("/add")
-    public AssetPriceResponse AddAssetPrice(@RequestBody AssetPriceRequest assetPriceRequest)
+    public AssetPriceResponse AddAssetPrice(@Valid @RequestBody AssetPriceRequest assetPriceRequest)
     {
         return assetPriceService.AddAssetPrice(assetPriceRequest);
     }

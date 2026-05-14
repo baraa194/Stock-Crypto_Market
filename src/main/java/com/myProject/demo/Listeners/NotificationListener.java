@@ -14,7 +14,6 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
-@Async
 @Slf4j
 public class NotificationListener {
 
@@ -24,7 +23,9 @@ public class NotificationListener {
     private WalletRepo walletRepo;
 
 
-    @EventListener
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onExecutedtradeEvent(TradeExecutedEvent event) {
 
        notificationService.sendNotification(event.getUsername(),

@@ -3,6 +3,7 @@ package com.myProject.demo.Conrollers;
 import com.myProject.demo.DTO.PortfolioRequest;
 import com.myProject.demo.DTO.PortfolioResponse;
 import com.myProject.demo.Services.PortfolioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class PortfolioController {
 
 
     @PostMapping("/add")
-    public ResponseEntity<PortfolioResponse> createPortfolio(@RequestBody PortfolioRequest request) {
+    public ResponseEntity<PortfolioResponse> createPortfolio(@Valid @RequestBody PortfolioRequest request) {
         PortfolioResponse response = portfolioService.CreatePortfolio(request);
         return ResponseEntity.ok(response);
     }
@@ -42,7 +43,7 @@ public class PortfolioController {
 
     @PutMapping("/edit/{id}")
     public ResponseEntity<PortfolioResponse> updatePortfolio(@PathVariable Long id,
-                                                             @RequestBody PortfolioRequest request) {
+                                                            @Valid @RequestBody PortfolioRequest request) {
         PortfolioResponse response = portfolioService.updatePortfolio(id, request);
         return ResponseEntity.ok(response);
     }

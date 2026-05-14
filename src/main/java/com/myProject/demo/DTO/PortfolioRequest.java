@@ -1,5 +1,6 @@
 package com.myProject.demo.DTO;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PortfolioRequest {
+    @NotBlank(message = "username is required")
     private String username;
 
     private List<PortfolioItemRequest> items;

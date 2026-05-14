@@ -2,6 +2,7 @@ package com.myProject.demo.DTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AssetPriceRequest {
+    @Positive
     private BigDecimal price;
     @JsonProperty("assetName")
     private String AssetName;

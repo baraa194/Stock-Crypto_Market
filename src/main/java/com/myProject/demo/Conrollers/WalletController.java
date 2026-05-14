@@ -3,6 +3,7 @@ package com.myProject.demo.Conrollers;
 import com.myProject.demo.DTO.WalletRequest;
 import com.myProject.demo.DTO.WalletResponse;
 import com.myProject.demo.Services.WalletService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class WalletController {
 
 
     @PostMapping("/add")
-    public ResponseEntity<String> addWallet(@RequestBody WalletRequest walletRequest) {
+    public ResponseEntity<String> addWallet(@Valid  @RequestBody WalletRequest walletRequest) {
 
 
         walletService.AddWallet(walletRequest);
@@ -30,7 +31,7 @@ public class WalletController {
 
     @PutMapping("/edit/{id}")
     public ResponseEntity<WalletResponse> updateWallet(
-            @RequestBody WalletRequest walletRequest,
+           @Valid @RequestBody WalletRequest walletRequest,
             @PathVariable Long id) {
         WalletResponse updatedWallet = walletService.updateWallet(walletRequest, id);
         return ResponseEntity.ok(updatedWallet);
