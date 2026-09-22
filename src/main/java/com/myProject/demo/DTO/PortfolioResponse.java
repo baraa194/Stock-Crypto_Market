@@ -14,7 +14,7 @@ import java.util.List;
 public class PortfolioResponse {
     private Long id;
     private String username;
-    private LocalDateTime createdAt;
+    private LocalDateTime created_at;
     private BigDecimal totalPNL;
     private List<PortfolioItemResponse> portfolioItems;
 }

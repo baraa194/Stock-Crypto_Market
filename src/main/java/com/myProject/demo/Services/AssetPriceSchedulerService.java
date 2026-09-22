@@ -22,7 +22,7 @@ public class AssetPriceSchedulerService {
     Logger log = LoggerFactory.getLogger(AssetPriceSchedulerService.class);
 
     boolean executed = false;
-    @Scheduled(fixedRate=15000)
+   /* @Scheduled(fixedRate=15000)
    public void updateassetpricesAutomatically()
    {
        if(executed)
@@ -47,5 +47,5 @@ public class AssetPriceSchedulerService {
     {
         return assetPriceRepo.findAllPrices();
 
-    }
+    }*/
 }

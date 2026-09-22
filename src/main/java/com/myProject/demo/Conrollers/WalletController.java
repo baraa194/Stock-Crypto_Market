@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/wallets")
+@CrossOrigin(origins = "http://localhost:4200")
 public class WalletController {
     @Autowired
     private WalletService walletService;

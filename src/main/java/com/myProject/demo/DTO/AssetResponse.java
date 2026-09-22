@@ -5,22 +5,19 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-public class AssetDTO {
+public class AssetResponse {
 
+    private Long id;
     @NotBlank(message = "asset name is required")
     private String name;
     @NotBlank
     private String symbol;
-
+    
     private AssetType type;
     @NotNull
     private BigDecimal currentPrice;
-
 }

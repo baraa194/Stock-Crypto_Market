@@ -1,6 +1,7 @@
 package com.myProject.demo.Services;
 
 import com.myProject.demo.DTO.AssetDTO;
+import com.myProject.demo.DTO.AssetResponse;
 import com.myProject.demo.DTO.AssetUpdateDTO;
 import com.myProject.demo.Exceptions.AssetNotFoundException;
 import com.myProject.demo.Models.Asset;
@@ -25,8 +26,8 @@ public class AssetService {
     private  ModelMapper modelMapper;
 
     @Cacheable("assets")
-    public List<AssetDTO> findAll() {
-        List<AssetDTO> result = assetRepo.findAllAssets();
+    public List<AssetResponse> findAll() {
+        List<AssetResponse> result = assetRepo.findAllAssets();
         log.info("Assets count: " + result.size());
         return result;
     }

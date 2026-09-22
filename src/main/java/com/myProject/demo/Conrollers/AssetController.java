@@ -1,6 +1,7 @@
 package com.myProject.demo.Conrollers;
 
 import com.myProject.demo.DTO.AssetDTO;
+import com.myProject.demo.DTO.AssetResponse;
 import com.myProject.demo.DTO.AssetUpdateDTO;
 import com.myProject.demo.Exceptions.AssetNotFoundException;
 import com.myProject.demo.Repositories.AssetRepo;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/assets")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AssetController {
 
     @Autowired
@@ -40,7 +42,7 @@ public class AssetController {
          return ResponseEntity.ok().body(asset);
      }
      @GetMapping("/getall")
-    public List<AssetDTO> findAllAssets()
+    public List<AssetResponse> findAllAssets()
      {
          return assetService.findAll();
      }

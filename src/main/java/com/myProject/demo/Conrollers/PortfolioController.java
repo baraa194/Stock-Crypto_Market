@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/portfolios")
+@CrossOrigin(origins = "http://localhost:4200")
 public class PortfolioController {
 
 
@@ -41,10 +42,10 @@ public class PortfolioController {
     }
 
 
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<PortfolioResponse> updatePortfolio(@PathVariable Long id,
+    @PutMapping("/edit/{username}")
+    public ResponseEntity<PortfolioResponse> updatePortfolio(@PathVariable String username,
                                                             @Valid @RequestBody PortfolioRequest request) {
-        PortfolioResponse response = portfolioService.updatePortfolio(id, request);
+        PortfolioResponse response = portfolioService.updatePortfolio(username, request);
         return ResponseEntity.ok(response);
     }
 

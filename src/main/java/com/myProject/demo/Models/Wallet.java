@@ -28,6 +28,8 @@ public class Wallet {
 
     @Column(nullable = false, precision = 18, scale = 8)
     private BigDecimal balance;
+    @Column( precision = 18, scale = 8)
+    private BigDecimal reservedBalance = BigDecimal.ZERO;
 
     @Column(nullable = false)
     private String currency;   // USD, EUR, BTC, USDT...

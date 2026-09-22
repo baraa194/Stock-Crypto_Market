@@ -1,5 +1,6 @@
 package com.myProject.demo.Services;
 
+import com.myProject.demo.DTO.PortfolioItemRequest;
 import com.myProject.demo.DTO.PortfolioItemResponse;
 import com.myProject.demo.DTO.PortfolioRequest;
 import com.myProject.demo.DTO.PortfolioResponse;
@@ -28,6 +29,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,12 +57,12 @@ public class PortfolioService {
 
        Portfolio portf=new Portfolio();
        portf.setUser(user);
-       //portf.setCreated_at(LocalDateTime.now());
+
 
     portfolioRepo.save(portf);
     PortfolioResponse response=new PortfolioResponse();
     response.setId(portf.getId());
-    response.setCreatedAt(LocalDateTime.now());
+    response.setCreated_at(LocalDateTime.now());
     response.setUsername(portfReq.getUsername());
 
 
@@ -68,34 +70,47 @@ public class PortfolioService {
      return response;
 
    }
-  @Caching(evict = {
-         @CacheEvict(value = "portfolios", key = "#id"),
-           @CacheEvict(value = "portfoliosList", allEntries = true)
-   })
-    public PortfolioResponse updatePortfolio(Long id, PortfolioRequest request) {
-        Portfolio portfolio = portfolioRepo.findById(id)
-                .orElseThrow(() -> new PortfolioNotFoundException("Portfolio not found"));
+//  @Caching(evict = {
+//         @CacheEvict(value = "portfolios", key = "#id"),
+//           @CacheEvict(value = "portfoliosList", allEntries = true)
+//   })
+  public PortfolioResponse updatePortfolio(String username, PortfolioRequest request) {
+      Portfolio portfolio = portfolioRepo.findByUserUsername(username)
+              .orElseThrow(() -> new PortfolioNotFoundException("Portfolio not found"));
 
 
-        itemRepo.deleteAll(portfolio.getPortfolioItems());
+      Map<Long, PortfolioItem> existingItems = portfolio.getPortfolioItems().stream()
+              .collect(Collectors.toMap(item -> item.getAsset().getId(), item -> item));
 
-        List<PortfolioItem> items = request.getItems().stream().map(itemReq -> {
-            Asset asset = assetRepo.findAssetByName(itemReq.getAssetname())
-                    .orElseThrow(() -> new AssetNotFoundException("Asset not found: " + itemReq.getAssetname()));
-            PortfolioItem item = new PortfolioItem();
-            item.setPortfolio(portfolio);
-            item.setAsset(asset);
-            item.setQuantity(itemReq.getQuantity());
-            item.setAverage_buy_price(itemReq.getAverage_buy_price());
-            item.setUpdated_at(LocalDateTime.now());
-            return item;
-        }).collect(Collectors.toList());
+      List<PortfolioItem> updatedItems = new ArrayList<>();
 
-        itemRepo.saveAll(items);
-        portfolio.setPortfolioItems(items);
+      for (PortfolioItemRequest itemReq : request.getItems()) {
+          Asset asset = assetRepo.findAssetByName(itemReq.getAssetname())
+                  .orElseThrow(() -> new AssetNotFoundException("Asset not found"));
 
-        return modelMapper.map(portfolio, PortfolioResponse.class);
-    }
+          if (existingItems.containsKey(asset.getId())) {
+
+              PortfolioItem existingItem = existingItems.get(asset.getId());
+              existingItem.setQuantity(itemReq.getQuantity());
+              existingItem.setAverage_buy_price(itemReq.getAverage_buy_price());
+              existingItem.setUpdated_at(LocalDateTime.now());
+              updatedItems.add(existingItem);
+          } else {
+
+              PortfolioItem newItem = new PortfolioItem();
+              newItem.setPortfolio(portfolio);
+              newItem.setAsset(asset);
+              newItem.setQuantity(itemReq.getQuantity());
+              newItem.setAverage_buy_price(itemReq.getAverage_buy_price());
+              newItem.setUpdated_at(LocalDateTime.now());
+              updatedItems.add(newItem);
+          }
+      }
+
+
+      itemRepo.saveAll(updatedItems);
+      return modelMapper.map(portfolio, PortfolioResponse.class);
+  }
 
     @Cacheable("portfoliosList")
     public List<PortfolioResponse> getAllPortfolios() {
@@ -112,7 +127,7 @@ public class PortfolioService {
         PortfolioResponse response = new PortfolioResponse();
         response.setId(portfolio.getId());
         response.setUsername(portfolio.getUser().getUsername());
-        response.setCreatedAt(portfolio.getCreated_at());
+        response.setCreated_at(portfolio.getCreated_at());
         response.setTotalPNL(portfolio.getTotalPNL());
 
 

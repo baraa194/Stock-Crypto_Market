@@ -21,8 +21,7 @@ public class PortfolioItem {
     @Column(nullable = false)
     private BigDecimal average_buy_price;
     private LocalDateTime updated_at;
-
-
+    private BigDecimal reservedQuantity;
     @ManyToOne
     @JoinColumn(name="portfolio_id")
     private Portfolio portfolio;

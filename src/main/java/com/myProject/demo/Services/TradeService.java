@@ -93,19 +93,29 @@ public class TradeService {
                     tradereq.getQuantity(),
                     assetcurrentprice);
 
-            log.info("User wallet balance before trade={}", userwallet.getBalance());
-            if(userwallet.getBalance().compareTo(totalcost) >=0)
+
+            BigDecimal availableBalance=userwallet.getBalance()
+                    .subtract(userwallet.getReservedBalance());
+            log.info("User wallet available balance before trade={}", availableBalance);
+            if(tradereq.isFromOrder())
             {
+                userwallet.setBalance(
+                        userwallet.getBalance().subtract(totalcost));
+            }else{
+                if(availableBalance.compareTo(totalcost) >=0)
+                {
 
-             userwallet.setBalance(userwallet.getBalance().subtract(totalcost));
-             userwallet.setUpdatedAt(LocalDateTime.now());
-                walletRepo.save(userwallet);
-                log.info("Wallet updated. New balance={}", userwallet.getBalance());
-            }
-            else{
-                throw new InsufficientFundsException("Insufficient Funds");
+                    userwallet.setBalance(userwallet.getBalance().subtract(totalcost));
+                    userwallet.setUpdatedAt(LocalDateTime.now());
+                    walletRepo.save(userwallet);
+                    log.info("Wallet updated. New balance={}", userwallet.getBalance());
+                }
+                else{
+                    throw new InsufficientFundsException("Insufficient Funds");
 
+                }
             }
+
             // update portfolio items
             Optional<PortfolioItem> existingitem= portfoliofromdb.getPortfolioItems().stream()
                     .filter(i->i.getAsset().getName().equals(tradereq.getAssetName()))
@@ -207,8 +217,20 @@ public void CreatesellingTrade(SellTradeRequest tradereq) {
             .filter(i->i.getAsset().getName().equals(tradereq.getAssetName()))
             .findFirst().orElseThrow(() -> new AssetNotFoundException("Asset not found in portfolio"));
 
-     if(tradereq.getQuantity().compareTo(BigDecimal.ZERO)>0 &&
-     tradereq.getQuantity().compareTo(portfolioitem.getQuantity()) <=0)
+        BigDecimal availableQuantity = portfolioitem.getQuantity()
+                        .subtract(portfolioitem.getReservedQuantity());
+
+        boolean validQuantity;
+
+        if (tradereq.isFromOrder()) {
+            validQuantity =
+                    tradereq.getQuantity().compareTo(BigDecimal.ZERO) > 0
+                            && tradereq.getQuantity().compareTo(portfolioitem.getReservedQuantity()) <= 0;
+        } else {
+            validQuantity = tradereq.getQuantity().compareTo(BigDecimal.ZERO) > 0 &&tradereq.getQuantity()
+                                    .compareTo(availableQuantity) <= 0;
+        }
+        if(validQuantity)
      {
          Wallet userwallet= walletRepo.findByUserUsername(tradereq.getUsername());
          BigDecimal assetcurrentprice=assetfromdb.getCurrentPrice();

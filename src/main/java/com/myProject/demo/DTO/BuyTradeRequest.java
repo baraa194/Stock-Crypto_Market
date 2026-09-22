@@ -22,6 +22,7 @@ public class BuyTradeRequest {
     private String username;
     @NotNull(message="portfolio id is required")
     private Long portfolioId;
+    private boolean fromOrder;
 
 
 

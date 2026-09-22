@@ -5,6 +5,7 @@ import com.myProject.demo.DTO.AssetPriceResponse;
 import com.myProject.demo.Exceptions.AssetNotFoundException;
 import com.myProject.demo.Models.Asset;
 import com.myProject.demo.Models.AssetPrice;
+import com.myProject.demo.Models.Order;
 import com.myProject.demo.Repositories.AssetPriceRepo;
 import com.myProject.demo.Repositories.AssetRepo;
 import org.modelmapper.ModelMapper;
@@ -25,6 +26,8 @@ public class AssetPriceService {
     private AssetRepo assetRepo;
     @Autowired
     private  ModelMapper modelMapper;
+    @Autowired
+    private OrderService orderService;
 
     @CacheEvict(value="assets", allEntries=true)
     public AssetPriceResponse AddAssetPrice(AssetPriceRequest assetPriceRequest) {
@@ -40,6 +43,15 @@ public class AssetPriceService {
 
         asset.setCurrentPrice(assetPriceRequest.getPrice());
             assetRepo.save(asset);
+
+        List<Order> matchedOrders =
+                orderService.getMatchedOrders(
+                        asset.getName(),
+                        assetPriceRequest.getPrice()
+                );
+
+
+        orderService.passOrdersToTrade(matchedOrders);
 
             return modelMapper.map(assetprice,AssetPriceResponse.class);
     }

@@ -12,6 +12,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/assetprices")
+@CrossOrigin(origins = "http://localhost:4200")
+
 public class AssetPriceController {
     @Autowired
     private AssetPriceService assetPriceService;
