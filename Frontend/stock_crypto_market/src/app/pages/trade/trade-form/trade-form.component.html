@@ -1,0 +1,236 @@
+<div class="trade-page min-h-screen bg-[#0b0e14] text-slate-100 p-4 sm:p-6 lg:p-8 font-sans flex flex-col items-center">
+
+  <div class="w-full max-w-4xl">
+
+    <!-- Page Header -->
+    <div class="page-header mb-8 text-left">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Trade</h1>
+      <p class="text-sm text-slate-400 mt-1">Buy and sell assets in your portfolio</p>
+    </div>
+
+
+    <!-- Trade Card -->
+    <div class="trade-card !bg-[#121620] border border-slate-800/80 rounded-2xl p-6 sm:p-8 max-w-2xl mx-auto mb-8 shadow-xl">
+
+      <!-- Buy / Sell Toggle -->
+      <div class="trade-toggle grid grid-cols-2 gap-2 p-1 !bg-[#161b26] border border-slate-800/80 rounded-xl mb-6">
+        <button 
+          type="button"
+          class="toggle-btn py-2.5 text-sm rounded-lg transition-all duration-200 cursor-pointer !border-0" 
+          (click)="setTradeType('buy')" 
+          [class.!bg-amber-400]="tradeType === 'buy'"
+          [class.!text-slate-950]="tradeType === 'buy'"
+          [class.font-bold]="tradeType === 'buy'"
+          [class.text-slate-400]="tradeType !== 'buy'"
+          [class.active]="tradeType === 'buy'">
+          Buy
+        </button>
+
+        <button 
+          type="button"
+          class="toggle-btn py-2.5 text-sm rounded-lg transition-all duration-200 cursor-pointer !border-0" 
+          (click)="setTradeType('sell')" 
+          [class.!bg-amber-400]="tradeType === 'sell'"
+          [class.!text-slate-950]="tradeType === 'sell'"
+          [class.font-bold]="tradeType === 'sell'"
+          [class.text-slate-400]="tradeType !== 'sell'"
+          [class.active]="tradeType === 'sell'">
+          Sell
+        </button>
+      </div>
+
+
+      <!-- Form Title -->
+      <div class="form-header mb-6">
+        <h2 class="text-lg font-bold text-white capitalize">{{ tradeType }} Asset</h2>
+        <p class="text-xs text-slate-400 mt-1">Enter your trade details</p>
+      </div>
+
+
+      <!-- Static Form -->
+      <form [formGroup]="tradeForm" (ngSubmit)="onSubmit()" class="space-y-5">
+
+        <!-- Asset Name -->
+        <div class="form-group">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Asset Name</label>
+
+          <input
+            type="text"
+            formControlName="assetName"
+            placeholder="e.g. BTC, ETH, AAPL"
+            class="w-full !bg-[#161b26] border border-slate-800 focus:border-amber-400 !text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors placeholder:text-slate-600"
+          >
+        </div>
+
+
+        <!-- Quantity -->
+        <div class="form-group">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Quantity</label>
+
+          <input
+            type="number"
+            placeholder="Enter quantity"
+            formControlName="quantity"
+            class="w-full !bg-[#161b26] border border-slate-800 focus:border-amber-400 !text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors placeholder:text-slate-600"
+          >
+        </div>
+
+    @if(tradeType==='sell')
+    {
+         <div class="form-group">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Price at Trade</label>
+
+          <input
+            type="number"
+            placeholder="Enter price"
+            formControlName="price_at_trade"
+            class="w-full !bg-[#161b26] border border-slate-800 focus:border-amber-400 !text-white text-sm rounded-xl px-4 py-3 outline-none transition-colors placeholder:text-slate-600"
+          >
+        </div> 
+    }
+        
+
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          class="trade-submit-btn w-full mt-2 !bg-amber-400 hover:!bg-amber-300 !text-slate-950 font-bold py-3 px-4 rounded-xl transition-colors shadow-lg shadow-amber-400/10 cursor-pointer !border-0"
+        >
+          Submit
+        </button>
+    
+
+      </form>
+
+    </div>
+
+    <!-- History Section -->
+    <div class="history-section !bg-[#121620] border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-xl w-full">
+
+      @if (tradeType === 'buy') {
+
+        <!-- ===================== -->
+        <!-- BUY HISTORY -->
+        <!-- ===================== -->
+
+        <div class="history-header mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-white">Buy History</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Your recent buy trades</p>
+          </div>
+        </div>
+
+        <div class="table-container overflow-x-auto border border-slate-800/60 rounded-xl">
+
+          <table class="w-full text-left text-sm">
+
+            <thead class="!bg-[#161b26] text-xs uppercase text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="py-3.5 px-4 font-semibold">Asset</th>
+                <th class="py-3.5 px-4 font-semibold">Quantity</th>
+                <th class="py-3.5 px-4 font-semibold">Portfolio ID</th>
+                <th class="py-3.5 px-4 font-semibold">PNL</th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-y divide-slate-800/60 !bg-[#121620]">
+
+              @for (trade of buyTrades; track $index) {
+
+                <tr class="hover:bg-[#161b26]/50 transition-colors">
+                  <td class="py-4 px-4 font-semibold text-white">{{ trade.assetName }}</td>
+
+                  <td class="py-4 px-4 text-slate-300">
+                    {{ trade.quantity }}
+                  </td>
+
+                  <td class="py-4 px-4 text-slate-400 text-xs">
+                    {{ trade.portfolioId }}
+                  </td>
+
+                  <td class="py-4 px-4 font-semibold text-slate-200">
+                    {{ trade.PNL }}
+                  </td>
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      } @else {
+
+        <!-- ===================== -->
+        <!-- SELL HISTORY -->
+        <!-- ===================== -->
+
+        <div class="history-header mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-white">Sell History</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Your recent sell trades</p>
+          </div>
+        </div>
+
+        <div class="table-container overflow-x-auto border border-slate-800/60 rounded-xl">
+
+          <table class="w-full text-left text-sm">
+
+            <thead class="!bg-[#161b26] text-xs uppercase text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="py-3.5 px-4 font-semibold">Asset</th>
+                <th class="py-3.5 px-4 font-semibold">Quantity</th>
+                <th class="py-3.5 px-4 font-semibold">Price at Trade</th>
+                <th class="py-3.5 px-4 font-semibold">Portfolio ID</th>
+                <th class="py-3.5 px-4 font-semibold">Realized PNL</th>
+                <th class="py-3.5 px-4 font-semibold">Unrealized PNL</th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-y divide-slate-800/60 !bg-[#121620]">
+
+              @for (trade of sellTrades; track $index) {
+
+                <tr class="hover:bg-[#161b26]/50 transition-colors">
+                  <td class="py-4 px-4 font-semibold text-white">
+                    {{ trade.assetName }}
+                  </td>
+
+                  <td class="py-4 px-4 text-slate-300">
+                    {{ trade.quantity }}
+                  </td>
+
+                  <td class="py-4 px-4 text-slate-300">
+                    {{ trade.price_at_trade }}
+                  </td>
+
+                  <td class="py-4 px-4 text-slate-400 text-xs">
+                    {{ trade.portfolioId }}
+                  </td>
+
+                  <td class="py-4 px-4 font-semibold text-slate-200">
+                    {{ trade.realizedPNL }}
+                  </td>
+
+                  <td class="py-4 px-4 font-semibold text-slate-200">
+                    {{ trade.unrealizedPNL }}
+                  </td>
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+
+</div>

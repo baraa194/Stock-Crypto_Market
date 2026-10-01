@@ -1,0 +1,208 @@
+<div class="p-6 max-w-7xl mx-auto space-y-8">
+
+  <!-- Create Order Section -->
+  <div class="bg-darkCard border border-darkBorder rounded-2xl p-6 shadow-2xl space-y-6">
+    
+    <div class="border-b border-darkBorder pb-4">
+      <h2 class="text-xl font-bold text-white tracking-tight">Create Order</h2>
+      <p class="text-xs text-textMuted mt-1">Set your target price and execute buy/sell market orders.</p>
+    </div>
+
+    <form [formGroup]="orderForm" (ngSubmit)="onSubmit()" class="space-y-6">
+
+      <!-- Buy / Sell Toggle Buttons -->
+      <div class="grid grid-cols-2 gap-3 p-1.5 bg-darkBg rounded-xl border border-darkBorder">
+        <button
+          type="button"
+          (click)="setTradeType('BUY')"
+          [class]="orderForm.value.type === 'BUY' 
+            ? 'bg-cryptoGreen text-black font-bold shadow-lg shadow-cryptoGreen/20 py-2.5 rounded-lg text-sm transition-all' 
+            : 'text-textMuted hover:text-white font-medium py-2.5 rounded-lg text-sm transition-all'">
+          BUY
+        </button>
+
+        <button
+          type="button"
+          (click)="setTradeType('SELL')"
+          [class]="orderForm.value.type === 'SELL' 
+            ? 'bg-cryptoRed text-white font-bold shadow-lg shadow-cryptoRed/20 py-2.5 rounded-lg text-sm transition-all' 
+            : 'text-textMuted hover:text-white font-medium py-2.5 rounded-lg text-sm transition-all'">
+          SELL
+        </button>
+      </div>
+
+      <!-- Form Inputs Row -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+        <!-- Asset Name -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-textMuted">Asset Name</label>
+          <input
+            type="text"
+            formControlName="assetName"
+            placeholder="e.g. AAPL, BTC"
+            class="w-full bg-darkBg border border-darkBorder rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cryptoYellow focus:ring-1 focus:ring-cryptoYellow transition-all"
+          />
+        </div>
+
+        <!-- Quantity -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-textMuted">Quantity</label>
+          <input
+            type="number"
+            formControlName="quantity"
+            placeholder="Enter quantity"
+            class="w-full bg-darkBg border border-darkBorder rounded-xl px-4 py-2.5 text-sm text-white font-mono placeholder-gray-600 focus:outline-none focus:border-cryptoYellow focus:ring-1 focus:ring-cryptoYellow transition-all"
+          />
+        </div>
+
+        <!-- Target Price -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-textMuted">Target Price ($)</label>
+          <input
+            type="number"
+            formControlName="targetPrice"
+            placeholder="Enter target price"
+            class="w-full bg-darkBg border border-darkBorder rounded-xl px-4 py-2.5 text-sm text-white font-mono placeholder-gray-600 focus:outline-none focus:border-cryptoYellow focus:ring-1 focus:ring-cryptoYellow transition-all"
+          />
+        </div>
+
+      </div>
+
+      <!-- Order Type Section -->
+      <div class="space-y-2 pt-2 border-t border-darkBorder/60">
+        <label class="block text-xs font-semibold uppercase tracking-wider text-textMuted">Order Type</label>
+
+        <div class="flex flex-wrap items-center gap-4 pt-1">
+
+          <!-- Limit Option -->
+          <label class="flex items-center gap-2 cursor-pointer bg-darkBg border border-darkBorder px-4 py-2.5 rounded-xl hover:border-cryptoYellow/50 transition-all text-sm font-medium text-white">
+            <input
+              type="radio"
+              formControlName="orderType"
+              value="LIMIT"
+              class="accent-cryptoYellow w-4 h-4 cursor-pointer"
+            />
+            <span>Limit</span>
+          </label>
+
+          @if (orderForm.value.type === 'SELL') {
+            <!-- Stop Loss Option -->
+            <label class="flex items-center gap-2 cursor-pointer bg-darkBg border border-darkBorder px-4 py-2.5 rounded-xl hover:border-cryptoRed/50 transition-all text-sm font-medium text-white">
+              <input
+                type="radio"
+                formControlName="orderType"
+                value="STOP_LOSS"
+                class="accent-cryptoRed w-4 h-4 cursor-pointer"
+              />
+              <span class="text-cryptoRed">Stop Loss</span>
+            </label>
+
+            <!-- Take Profit Option -->
+            <label class="flex items-center gap-2 cursor-pointer bg-darkBg border border-darkBorder px-4 py-2.5 rounded-xl hover:border-cryptoGreen/50 transition-all text-sm font-medium text-white">
+              <input
+                type="radio"
+                formControlName="orderType"
+                value="TAKE_PROFIT"
+                class="accent-cryptoGreen w-4 h-4 cursor-pointer"
+              />
+              <span class="text-cryptoGreen">Take Profit</span>
+            </label>
+          }
+
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        [disabled]="orderForm.invalid"
+        [class]="orderForm.value.type === 'SELL'
+          ? 'w-full bg-cryptoRed hover:bg-red-600 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-cryptoRed/20 text-sm'
+          : 'w-full bg-cryptoGreen hover:bg-emerald-500 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-cryptoGreen/20 text-sm'">
+        Place {{ orderForm.value.type || 'BUY' }} Order
+      </button>
+
+    </form>
+
+  </div>
+
+
+  <!-- Pending Orders Section -->
+  <div class="space-y-4">
+
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <h2 class="text-xl font-bold text-white tracking-tight">Pending Orders</h2>
+        <span class="px-2.5 py-0.5 bg-darkCard text-cryptoYellow font-mono text-xs rounded-full border border-darkBorder">
+          {{ pendingOrders.length }}
+        </span>
+      </div>
+
+      <button
+        class="bg-darkCard hover:bg-darkHover text-textMuted hover:text-white border border-darkBorder font-medium px-4 py-2 rounded-xl transition-all text-xs"
+        type="button"
+        routerLink="/viewOrders">
+        View All Orders →
+      </button>
+    </div>
+
+    @if (pendingOrders.length === 0) {
+      <div class="bg-darkCard border border-darkBorder rounded-2xl p-10 text-center">
+        <div class="w-12 h-12 rounded-xl bg-darkBg border border-darkBorder flex items-center justify-center text-textMuted mx-auto mb-3">
+          <svg class="w-6 h-6 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+          </svg>
+        </div>
+        <p class="text-white font-medium text-sm">No pending orders</p>
+        <p class="text-xs text-textMuted mt-1">Orders you create will appear here before execution.</p>
+      </div>
+    }
+
+    <!-- Grid Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (order of pendingOrders; track order.id) {
+
+        <div class="bg-darkCard border border-darkBorder rounded-2xl p-5 shadow-xl space-y-4 hover:border-darkHover transition-all relative overflow-hidden group">
+          
+          <!-- Indicator Strip -->
+          <div [class]="order.type === 'SELL' ? 'absolute top-0 left-0 right-0 h-1 bg-cryptoRed' : 'absolute top-0 left-0 right-0 h-1 bg-cryptoGreen'"></div>
+
+          <!-- Card Header -->
+          <div class="flex items-center justify-between pt-1">
+            <h3 class="text-base font-bold text-white">{{ order.assetName }}</h3>
+            <span class="px-2.5 py-0.5 bg-darkBg text-textMuted text-[10px] font-mono font-semibold rounded-full border border-darkBorder uppercase tracking-wider">
+              {{ order.status }}
+            </span>
+          </div>
+
+          <!-- Order Specs -->
+          <div class="bg-darkBg/60 rounded-xl p-3 border border-darkBorder/40 space-y-1.5 text-xs font-mono">
+            <div class="flex justify-between text-textMuted">
+              <span>Type:</span>
+              <strong class="text-white">{{ order.type }}</strong>
+            </div>
+            <div class="flex justify-between text-textMuted">
+              <span>Quantity:</span>
+              <span class="text-white">{{ order.quantity }}</span>
+            </div>
+            <div class="flex justify-between text-textMuted">
+              <span>Target Price:</span>
+              <span class="text-cryptoGreen">${{ order.targetPrice }}</span>
+            </div>
+          </div>
+
+          <button
+            class="w-full bg-cryptoRed/10 hover:bg-cryptoRed/20 text-cryptoRed border border-cryptoRed/30 font-medium py-2 rounded-xl transition-all text-xs"
+            type="button"
+            (click)="cancelOrder(order.id)">
+            Cancel
+          </button>
+
+        </div>
+      }
+    </div>
+
+  </div>
+
+</div>

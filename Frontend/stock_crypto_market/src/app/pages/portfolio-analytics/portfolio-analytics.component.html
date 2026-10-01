@@ -1,0 +1,196 @@
+<div class="min-h-screen bg-[#0b0e14] text-slate-100 p-4 sm:p-6 lg:p-8 font-sans">
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="flex items-center justify-center min-h-[300px]">
+      <div class="w-10 h-10 border-4 border-slate-700 border-t-amber-400 rounded-full animate-spin"></div>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (errorMessage && !isLoading) {
+    <div class="mb-6 p-4 bg-red-950/40 border border-red-800/60 rounded-xl text-red-400 text-sm flex items-center gap-3">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin=" His" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+
+  <!-- Data -->
+  @if (analyticsResponse && !isLoading) {
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Portfolio Overview</h1>
+        <p class="text-sm text-slate-400 mt-1">Real-time analytics & allocation</p>
+      </div>
+      <span class="self-start sm:self-auto px-3 py-1.5 bg-[#161b26] border border-slate-800 text-slate-300 rounded-lg text-xs font-medium">
+        {{ analyticsResponse.userName }}
+      </span>
+    </div>
+
+    <!-- ===== KEY METRICS ===== -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      
+      <!-- Total Market Value -->
+      <div class="bg-[#121620] border border-slate-800/80 rounded-2xl p-5 hover:border-slate-700 transition-colors">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Market Value</p>
+          <div class="w-8 h-8 rounded-lg bg-amber-400/10 text-amber-400 flex items-center justify-center text-sm">💰</div>
+        </div>
+        <h2 class="text-2xl font-bold text-white tracking-tight mb-1">
+          {{ analyticsResponse.totalMarketValue | currency }}
+        </h2>
+        <p class="text-xs text-slate-500">Cost Basis: {{ analyticsResponse.totalCostBasis | currency }}</p>
+      </div>
+
+      <!-- Total PNL -->
+      <div class="bg-[#121620] border border-slate-800/80 rounded-2xl p-5 hover:border-slate-700 transition-colors">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total PNL</p>
+          <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-sm">📈</div>
+        </div>
+        <div class="flex items-baseline justify-between gap-2">
+          <h2 class="text-2xl font-bold tracking-tight mb-1" 
+              [ngClass]="analyticsResponse.totalPNL >= 0 ? 'text-emerald-400' : 'text-rose-400'">
+            {{ analyticsResponse.totalPNL >= 0 ? '+' : '' }}{{ analyticsResponse.totalPNL | currency }}
+          </h2>
+          <span class="px-2 py-0.5 text-xs font-semibold rounded-md flex items-center gap-1"
+                [ngClass]="analyticsResponse.returnPercentage >= 0 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'">
+            {{ analyticsResponse.returnPercentage >= 0 ? '▲' : '▼' }} {{ analyticsResponse.returnPercentage | number:'1.2-2' }}%
+          </span>
+        </div>
+      </div>
+
+      <!-- Realized PNL -->
+      <div class="bg-[#121620] border border-slate-800/80 rounded-2xl p-5 hover:border-slate-700 transition-colors">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Realized PNL</p>
+          <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center text-sm">🔒</div>
+        </div>
+        <h2 class="text-2xl font-bold text-white tracking-tight mb-1">
+          {{ analyticsResponse.realizedPNL | currency }}
+        </h2>
+        <p class="text-xs text-slate-500">Locked Profit / Loss</p>
+      </div>
+
+      <!-- Unrealized PNL -->
+      <div class="bg-[#121620] border border-slate-800/80 rounded-2xl p-5 hover:border-slate-700 transition-colors">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Unrealized PNL</p>
+          <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-sm">⏳</div>
+        </div>
+        <h2 class="text-2xl font-bold tracking-tight mb-1" 
+            [ngClass]="analyticsResponse.unrealizedPNL >= 0 ? 'text-emerald-400' : 'text-rose-400'">
+          {{ analyticsResponse.unrealizedPNL >= 0 ? '+' : '' }}{{ analyticsResponse.unrealizedPNL | currency }}
+        </h2>
+        <p class="text-xs text-slate-500">Open Positions</p>
+      </div>
+
+    </div>
+
+    <!-- ===== CHARTS SECTION ===== -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- DONUT CHART -->
+      <div class="lg:col-span-5 bg-[#121620] border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between">
+        <div class="flex items-center gap-2 mb-6">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+          <h3 class="text-base font-semibold text-white">Asset Allocation</h3>
+        </div>
+
+        <div class="relative w-48 h-48 mx-auto my-4 flex items-center justify-center">
+          <!-- SVG Donut -->
+          <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+            <!-- Background circle -->
+            <circle class="text-slate-800 stroke-current" stroke-width="3.8" fill="none" cx="18" cy="18" r="15.915"></circle>
+
+            <!-- Segments -->
+            @for (asset of analyticsResponse.assets; track asset.assetName; let i = $index) {
+              <circle stroke-width="3.8" 
+                      fill="none" 
+                      class="transition-all duration-300"
+                      [attr.stroke]="getColor(i)"
+                      [attr.stroke-dasharray]="asset.allocationPercentage + ' ' + (100 - asset.allocationPercentage)"
+                      [attr.stroke-dashoffset]="getOffset(i)"
+                      cx="18" cy="18" r="15.915">
+              </circle>
+            }
+          </svg>
+
+          <!-- Center text -->
+          <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+            <span class="text-lg font-bold text-white">{{ analyticsResponse.totalMarketValue | currency:'USD':'symbol':'1.0-0' }}</span>
+            <span class="text-[11px] text-slate-400 uppercase tracking-wider">Total Value</span>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="mt-6 space-y-2 border-t border-slate-800/60 pt-4">
+          @for (asset of analyticsResponse.assets; track asset.assetName; let i = $index) {
+            <div class="flex items-center justify-between text-xs py-1">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-sm" [style.background]="getColor(i)"></span>
+                <span class="text-slate-300 font-medium">{{ asset.assetName }}</span>
+              </div>
+              <span class="text-slate-400 font-semibold">{{ asset.allocationPercentage | number:'1.1-1' }}%</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- ASSETS LIST WITH BARS -->
+      <div class="lg:col-span-7 bg-[#121620] border border-slate-800/80 rounded-2xl p-6">
+        <div class="flex items-center gap-2 mb-6">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+          <h3 class="text-base font-semibold text-white">Holdings Breakdown</h3>
+        </div>
+
+        <div class="space-y-4">
+          @for (asset of analyticsResponse.assets; track asset.assetName; let i = $index) {
+            <div class="p-4 bg-[#161b26] border border-slate-800/50 rounded-xl relative overflow-hidden group hover:border-slate-700 transition-colors">
+              
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl font-bold flex items-center justify-center text-xs tracking-wider"
+                       [style.background]="getColor(i) + '1A'" 
+                       [style.color]="getColor(i)">
+                    {{ asset.assetName.substring(0, 2).toUpperCase() }}
+                  </div>
+                  <div>
+                    <div class="font-semibold text-white text-sm">{{ asset.assetName }}</div>
+                    <div class="text-xs text-slate-400 mt-0.5">
+                      {{ asset.quantity }} units <span class="mx-1">•</span> Avg {{ asset.averageBuyPrice | currency }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-right">
+                  <div class="font-bold text-white text-sm">{{ asset.marketValue | currency }}</div>
+                  <div class="text-xs font-medium mt-0.5 flex items-center justify-end gap-1"
+                       [ngClass]="asset.unrealizedPNL >= 0 ? 'text-emerald-400' : 'text-rose-400'">
+                    <span>{{ asset.unrealizedPNL >= 0 ? '+' : '' }}{{ asset.unrealizedPNL | currency }}</span>
+                    <span>({{ asset.returnPercentage >= 0 ? '+' : '' }}{{ asset.returnPercentage | number:'1.1-1' }}%)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Progress bar track -->
+              <div class="w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-500"
+                     [style.width.%]="asset.allocationPercentage"
+                     [style.background]="getColor(i)">
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+
+  }
+</div>

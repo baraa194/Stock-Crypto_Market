@@ -1,0 +1,99 @@
+<nav class="bg-darkCard border-b border-darkBorder px-6 py-3.5 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+
+    <!-- Brand Logo -->
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cryptoYellow flex items-center justify-center font-bold text-black shadow-lg shadow-indigo-500/10">
+        <span class="text-sm font-black tracking-tighter">SC</span>
+      </div>
+      <span class="text-lg font-bold text-white tracking-wide">Stock<span class="text-cryptoYellow">Crypto</span></span>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="flex items-center gap-1 bg-darkBg/80 p-1.5 rounded-xl border border-darkBorder/60">
+      <a routerLink="/assets"
+         routerLinkActive="bg-darkHover text-white font-semibold shadow-sm"
+         class="px-4 py-2 text-sm text-textMuted rounded-lg transition-all hover:text-white">
+        Assets
+      </a>
+
+      <a routerLink="/trade"
+         routerLinkActive="bg-darkHover text-white font-semibold shadow-sm"
+         class="px-4 py-2 text-sm text-textMuted rounded-lg transition-all hover:text-white">
+        Trade
+      </a>
+
+      <a routerLink="/order"
+         routerLinkActive="bg-darkHover text-white font-semibold shadow-sm"
+         class="px-4 py-2 text-sm text-textMuted rounded-lg transition-all hover:text-white">
+        Make Order
+      </a>
+
+      <a routerLink="/wallets"
+         routerLinkActive="bg-darkHover text-white font-semibold shadow-sm"
+         class="px-4 py-2 text-sm text-textMuted rounded-lg transition-all hover:text-white">
+        Wallets
+      </a>
+
+      <a routerLink="/portfolios"
+         routerLinkActive="bg-darkHover text-white font-semibold shadow-sm"
+         class="px-4 py-2 text-sm text-textMuted rounded-lg transition-all hover:text-white">
+        Portfolios
+      </a>
+    </div>
+
+    <!-- Actions & Notifications -->
+    <div class="flex items-center gap-3">
+      <div class="relative">
+
+        <button (click)="toggleNotifications()"
+                class="w-10 h-10 rounded-xl bg-darkBg border border-darkBorder flex items-center justify-center text-textMuted hover:text-cryptoYellow hover:border-cryptoYellow/50 transition-all relative">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+          </svg>
+
+          @if (notificationService.notifications().length > 0) {
+            <span class="absolute -top-1 -right-1 bg-cryptoRed text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-darkCard">
+              {{ notificationService.notifications().length }}
+            </span>
+          }
+        </button>
+
+        <!-- Dropdown Menu -->
+        @if (showNotifications) {
+          <div class="absolute right-0 mt-3 w-80 bg-darkCard border border-darkBorder rounded-2xl shadow-2xl overflow-hidden z-50">
+            
+            <div class="px-4 py-3 border-b border-darkBorder flex items-center justify-between bg-darkBg/40">
+              <h3 class="text-sm font-semibold text-white">Notifications</h3>
+              <span class="text-xs bg-cryptoYellow/10 text-cryptoYellow font-medium px-2.5 py-0.5 rounded-full">
+                {{ notificationService.notifications().length }} new
+              </span>
+            </div>
+
+            <div class="max-h-80 overflow-y-auto divide-y divide-darkBorder">
+              @for (notification of notificationService.notifications(); track $index) {
+                <div class="p-3.5 flex items-start gap-3 hover:bg-darkHover/50 transition-colors">
+                  <div class="w-8 h-8 rounded-lg bg-cryptoYellow/10 text-cryptoYellow flex items-center justify-center shrink-0 mt-0.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  </div>
+                  <div class="text-xs text-gray-300 leading-relaxed">
+                    {{ notification }}
+                  </div>
+                </div>
+              } @empty {
+                <div class="p-8 text-center text-textMuted text-xs">
+                  No notifications yet
+                </div>
+              }
+            </div>
+
+          </div>
+        }
+
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+<router-outlet></router-outlet>

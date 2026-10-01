@@ -1,0 +1,108 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-white tracking-tight">Assets</h1>
+      <p class="text-sm text-textMuted mt-1">Manage your stocks & crypto assets</p>
+    </div>
+    
+    <button class="bg-cryptoYellow hover:bg-yellow-400 text-black font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-yellow-500/10 flex items-center gap-2 text-sm"
+            routerLink="/assets/add">
+      <span class="text-lg leading-none">+</span> Add Asset
+    </button>
+  </div>
+
+  <!-- Messages -->
+  @if (errorMessage) {
+    <div class="bg-cryptoRed/10 border border-cryptoRed/30 rounded-xl p-4 flex items-center gap-3 text-cryptoRed text-sm">
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+
+  @if (successMessage) {
+    <div class="bg-cryptoGreen/10 border border-cryptoGreen/30 rounded-xl p-4 flex items-center gap-3 text-cryptoGreen text-sm">
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+      <span>{{ successMessage }}</span>
+    </div>
+  }
+
+  <!-- Table Card -->
+  <div class="bg-darkCard border border-darkBorder rounded-2xl overflow-hidden shadow-2xl">
+    
+    <!-- Table Header -->
+    <div class="px-6 py-4 border-b border-darkBorder flex items-center justify-between bg-darkBg/30">
+      <h3 class="text-sm font-semibold text-white">All Assets List</h3>
+      <span class="px-3 py-1 bg-darkBg text-textMuted text-xs font-medium rounded-full border border-darkBorder">
+        {{ assetsList.length }} assets
+      </span>
+    </div>
+
+    <!-- Table Wrapper -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b border-darkBorder bg-darkBg/50 text-xs font-semibold text-textMuted uppercase tracking-wider">
+            <th class="py-3.5 px-6">ID</th>
+            <th class="py-3.5 px-6">Symbol</th>
+            <th class="py-3.5 px-6">Name</th>
+            <th class="py-3.5 px-6">Price</th>
+            <th class="py-3.5 px-6 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-darkBorder/60 text-sm">
+          @for (asset of assetsList; track asset.id) {
+            <tr class="hover:bg-darkHover/40 transition-colors group">
+              <td class="py-4 px-6 text-textMuted font-mono text-xs">#{{ asset.id }}</td>
+              <td class="py-4 px-6">
+                <span class="bg-indigo-500/10 text-indigo-400 font-bold px-2.5 py-1 rounded-lg border border-indigo-500/20 text-xs font-mono">
+                  {{ asset.symbol }}
+                </span>
+              </td>
+              <td class="py-4 px-6 font-medium text-white">{{ asset.name }}</td>
+              <td class="py-4 px-6 font-semibold text-cryptoGreen font-mono">
+                ${{ asset.currentPrice | number:'1.0-2' }}
+              </td>
+              <td class="py-4 px-6 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <button class="w-8 h-8 rounded-lg bg-darkBg border border-darkBorder text-textMuted hover:text-white hover:border-indigo-500/50 hover:bg-indigo-500/10 flex items-center justify-center transition-all"
+                          title="Edit"
+                          [routerLink]="['/assets/edit', asset.id]">
+                    ✏️
+                  </button>
+                  <button class="w-8 h-8 rounded-lg bg-darkBg border border-darkBorder text-textMuted hover:text-cryptoRed hover:border-cryptoRed/50 hover:bg-cryptoRed/10 flex items-center justify-center transition-all"
+                          title="Delete">
+                    🗑️
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="py-16 text-center">
+                <div class="flex flex-col items-center justify-center space-y-4">
+                  <div class="w-14 h-14 rounded-2xl bg-darkBg border border-darkBorder flex items-center justify-center text-textMuted shadow-inner">
+                    <svg class="w-7 h-7 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-white font-medium text-base">No assets available.</p>
+                    <p class="text-xs text-textMuted mt-1">Start by adding your first stock or crypto asset to the list.</p>
+                  </div>
+                  <button class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition-all shadow-md shadow-indigo-600/20"
+                          routerLink="/assets/add">
+                    Add your first asset
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>

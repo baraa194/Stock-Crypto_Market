@@ -1,0 +1,77 @@
+<div class="p-6 max-w-5xl mx-auto space-y-6">
+
+  <!-- Main Card Container -->
+  <div class="bg-darkCard border border-darkBorder rounded-2xl overflow-hidden shadow-2xl">
+
+    <!-- Card Header -->
+    <div class="px-6 py-4 border-b border-darkBorder flex items-center justify-between bg-darkBg/40">
+      <div class="flex items-center gap-2">
+        <div class="w-3 h-3 rounded-full bg-cryptoGreen animate-pulse"></div>
+        <h3 class="text-base font-semibold text-white tracking-wide">
+          {{ assetName }} Prices History
+        </h3>
+      </div>
+
+      <span class="px-3 py-1 bg-darkBg text-textMuted text-xs font-mono font-medium rounded-full border border-darkBorder">
+        {{ assetPricesList?.length || 0 }} Records
+      </span>
+    </div>
+
+    <!-- Table Container -->
+    <div class="overflow-x-auto" *ngIf="assetPricesList && assetPricesList.length > 0; else noData">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b border-darkBorder bg-darkBg/60 text-xs font-semibold text-textMuted uppercase tracking-wider">
+            <th class="py-3.5 px-6">Asset Name</th>
+            <th class="py-3.5 px-6">Price</th>
+            <th class="py-3.5 px-6">Recorded At</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-darkBorder/60 text-sm">
+          <tr *ngFor="let item of assetPricesList" class="hover:bg-darkHover/40 transition-colors">
+            
+            <!-- Asset Name -->
+            <td class="py-4 px-6 font-medium text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+              {{ item.assetName }}
+            </td>
+
+            <!-- Price -->
+            <td class="py-4 px-6 font-semibold text-cryptoGreen font-mono">
+              ${{ item.price | number:'1.0-2' }}
+            </td>
+
+            <!-- Recorded At -->
+            <td class="py-4 px-6 text-textMuted font-mono text-xs">
+              {{ item.recordedAt | date:'medium' }}
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- No Data Template -->
+<ng-template #noData>
+  <div class="py-12 px-6 text-center">
+    <div class="flex flex-col items-center justify-center space-y-3">
+      <div class="w-12 h-12 rounded-xl bg-darkBg border border-darkBorder flex items-center justify-center text-textMuted">
+        <svg class="w-6 h-6 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div>
+        <p class="text-white font-medium text-sm" *ngIf="assetName">
+          No prices data found for <span class="text-cryptoYellow font-semibold">{{ assetName }}</span>
+        </p>
+        <p class="text-xs text-textMuted mt-1">
+          Historical market data will appear here once recorded.
+        </p>
+      </div>
+    </div>
+  </div>
+</ng-template>

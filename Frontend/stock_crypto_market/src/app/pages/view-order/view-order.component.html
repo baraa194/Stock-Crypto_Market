@@ -1,0 +1,109 @@
+<div class="orders-page min-h-screen bg-[#0b0e14] text-slate-100 p-4 sm:p-6 lg:p-8 font-sans">
+
+  <!-- Page Header -->
+  <div class="page-header mb-8">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">My Orders</h1>
+      <p class="text-sm text-slate-400 mt-1">View and track all your limit orders</p>
+    </div>
+  </div>
+
+  @if (portfolioOrders.length === 0) {
+
+    <!-- Empty State -->
+    <div class="empty-state bg-[#121620] border border-slate-800/80 rounded-2xl p-12 text-center max-w-md mx-auto my-12 shadow-xl">
+      <div class="w-16 h-16 bg-slate-800 bg-opacity-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+        📋
+      </div>
+      <h3 class="text-lg font-bold text-white mb-2">No Orders Yet</h3>
+      <p class="text-sm text-slate-400">You haven't placed any limit orders.</p>
+    </div>
+
+  } @else {
+
+    <!-- Orders Grid -->
+    <div class="orders-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      @for (order of portfolioOrders; track order.id) {
+
+        <div class="order-card bg-[#121620] border border-slate-800/80 rounded-2xl p-5 shadow-lg hover:border-slate-700 transition-all duration-200 flex flex-col justify-between">
+
+          <!-- Card Header -->
+          <div class="card-header flex items-start justify-between pb-4 border-b border-slate-800 mb-4">
+
+            <div>
+              <h3 class="text-base font-bold text-white mb-1.5">{{ order.assetName }}</h3>
+              
+              <!-- Order Type Badge (BUY / SELL) -->
+              <span class="order-type text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md inline-block"
+                    [class.bg-emerald-500]="order.type === 'BUY'"
+                    [class.bg-opacity-15]="order.type === 'BUY'"
+                    [class.text-emerald-400]="order.type === 'BUY'"
+                    [class.border]="order.type === 'BUY'"
+                    [class.border-emerald-500]="order.type === 'BUY'"
+                    [class.border-opacity-30]="order.type === 'BUY'"
+                    [class.bg-rose-500]="order.type === 'SELL'"
+                    [class.bg-opacity-15]="order.type === 'SELL'"
+                    [class.text-rose-400]="order.type === 'SELL'"
+                    [class.border]="order.type === 'SELL'"
+                    [class.border-rose-500]="order.type === 'SELL'"
+                    [class.border-opacity-30]="order.type === 'SELL'">
+                {{ order.type }}
+              </span>
+            </div>
+
+            <!-- Status Badge -->
+            <span
+              class="status text-xs font-semibold px-2.5 py-1 rounded-full border"
+              [class.bg-amber-500]="order.status === 'PENDING'"
+              [class.bg-opacity-10]="order.status === 'PENDING'"
+              [class.text-amber-400]="order.status === 'PENDING'"
+              [class.border-amber-500]="order.status === 'PENDING'"
+              [class.border-opacity-20]="order.status === 'PENDING'"
+              
+              [class.bg-emerald-500]="order.status === 'EXECUTED'"
+              [class.bg-opacity-10]="order.status === 'EXECUTED'"
+              [class.text-emerald-400]="order.status === 'EXECUTED'"
+              [class.border-emerald-500]="order.status === 'EXECUTED'"
+              [class.border-opacity-20]="order.status === 'EXECUTED'"
+
+              [class.bg-slate-500]="order.status === 'CANCELLED'"
+              [class.bg-opacity-10]="order.status === 'CANCELLED'"
+              [class.text-slate-400]="order.status === 'CANCELLED'"
+              [class.border-slate-500]="order.status === 'CANCELLED'"
+              [class.border-opacity-20]="order.status === 'CANCELLED'"
+
+              [class.bg-rose-500]="order.status === 'FAILED'"
+              [class.bg-opacity-10]="order.status === 'FAILED'"
+              [class.text-rose-400]="order.status === 'FAILED'"
+              [class.border-rose-500]="order.status === 'FAILED'"
+              [class.border-opacity-20]="order.status === 'FAILED'">
+              {{ order.status }}
+            </span>
+
+          </div>
+
+          <!-- Order Details -->
+          <div class="order-details grid grid-cols-2 gap-4 bg-[#161b26] p-3.5 rounded-xl border border-slate-800/50">
+
+            <div class="detail">
+              <span class="block text-xs text-slate-400 mb-1">Quantity</span>
+              <strong class="text-sm font-semibold text-white">{{ order.quantity }}</strong>
+            </div>
+
+            <div class="detail text-right">
+              <span class="block text-xs text-slate-400 mb-1">Target Price</span>
+              <strong class="text-sm font-semibold text-amber-400">${{ order.targetPrice }}</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>

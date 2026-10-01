@@ -1,0 +1,92 @@
+<div class="wallet-page min-h-screen bg-[#0b0e14] text-slate-100 p-4 sm:p-6 lg:p-8 font-sans">
+
+  <!-- Page Header -->
+  <div class="page-header mb-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Wallets</h1>
+    <p class="text-sm text-slate-400 mt-1">View and manage your wallets</p>
+  </div>
+
+  <!-- Wallet Container -->
+  <div class="wallet-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    @for (wallet of walletResponse; track $index) {
+
+      <div class="wallet-card bg-[#121620] border border-slate-800/80 rounded-2xl p-6 shadow-xl hover:border-slate-700 transition-all duration-200 flex flex-col justify-between">
+
+        <!-- Card Header -->
+        <div class="wallet-card-header pb-4 border-b border-slate-800 mb-5 flex items-center justify-between">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>
+            {{ wallet.currency }} Wallet
+          </h2>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-800 text-amber-400 border border-slate-700 uppercase tracking-wider">
+            {{ wallet.currency }}
+          </span>
+        </div>
+
+        <!-- Wallet Info -->
+        <div class="wallet-info space-y-3 bg-[#161b26] p-4 rounded-xl border border-slate-800/50 mb-6">
+
+          <div class="info-item flex justify-between items-center text-xs">
+            <span class="label text-slate-400 font-medium">User ID</span>
+            <span class="value font-mono text-slate-300">{{ wallet.user_id }}</span>
+          </div>
+
+          <div class="info-item flex justify-between items-center text-sm pt-2 border-t border-slate-800/60">
+            <span class="label text-slate-400 font-medium">Balance</span>
+            <span class="value font-bold text-emerald-400 text-base">{{ wallet.balance }}</span>
+          </div>
+
+          <div class="info-item flex justify-between items-center text-xs pt-2 border-t border-slate-800/60">
+            <span class="label text-slate-400 font-medium">Currency</span>
+            <span class="value font-semibold text-slate-200 uppercase">{{ wallet.currency }}</span>
+          </div>
+
+          <div class="info-item flex justify-between items-center text-xs pt-2 border-t border-slate-800/60">
+            <span class="label text-slate-400 font-medium">Last Updated</span>
+            <span class="value text-slate-400">{{ wallet.updatedAt }}</span>
+          </div>
+
+        </div>
+
+        <!-- Wallet Actions -->
+        <div class="wallet-actions grid grid-cols-1 gap-2 pt-2">
+          
+          <button
+            class="action-btn transactions-btn w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-2.5 px-4 rounded-xl text-xs transition-colors duration-200 cursor-pointer border border-slate-700/80 text-center"
+            [routerLink]="['/wallets', wallet.id, 'transactions']">
+            View Transactions
+          </button>
+
+          <div class="grid grid-cols-2 gap-2 mt-1">
+            <button
+              class="action-btn deposit-btn bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 px-3 rounded-xl text-xs transition-all duration-200 cursor-pointer text-center shadow-lg"
+              (click)="deposit(wallet.id)">
+              Deposit
+            </button>
+
+            <button
+              class="action-btn withdraw-btn bg-rose-500 hover:bg-rose-400 text-white font-bold py-2.5 px-3 rounded-xl text-xs transition-all duration-200 cursor-pointer text-center shadow-lg"
+              (click)="withdraw(wallet.id)">
+              Withdraw
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    } @empty {
+
+      <div class="empty-wallets col-span-full bg-[#121620] border border-slate-800/80 rounded-2xl p-12 text-center max-w-md mx-auto my-8 shadow-xl">
+        <div class="w-16 h-16 bg-slate-800 bg-opacity-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+          👛
+        </div>
+        <p class="text-base font-semibold text-slate-300">No wallets found.</p>
+      </div>
+
+    }
+
+  </div>
+
+</div>
