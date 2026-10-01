@@ -1,0 +1,92 @@
+package com.myProject.demo.Conrollers;
+
+import com.myProject.demo.DTO.LedgerEntryResponse;
+import com.myProject.demo.DTO.WalletRequest;
+import com.myProject.demo.DTO.WalletResponse;
+import com.myProject.demo.DTO.WalletTransactionRequest;
+import com.myProject.demo.Services.LedgerService;
+import com.myProject.demo.Services.WalletService;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/wallets")
+@CrossOrigin(origins = "http://localhost:4200")
+public class WalletController {
+    @Autowired
+    private WalletService walletService;
+    @Autowired
+    private LedgerService ledgerService;
+    Logger log = LoggerFactory.getLogger(WalletController.class);
+
+
+    @PostMapping("/add")
+    public ResponseEntity<String> addWallet(@Valid  @RequestBody WalletRequest walletRequest) {
+
+
+        walletService.AddWallet(walletRequest);
+        return ResponseEntity.ok("Wallet added successfully");
+    }
+    @PostMapping("/deposit")
+    public ResponseEntity<WalletResponse> deposit(
+            @RequestBody WalletTransactionRequest request) {
+
+        WalletResponse response = walletService.deposit(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/withdraw")
+    public ResponseEntity<WalletResponse> withdraw(
+            @RequestBody WalletTransactionRequest request) {
+
+        WalletResponse response = walletService.withdraw(request);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<WalletResponse> updateWallet(
+           @Valid @RequestBody WalletRequest walletRequest,
+            @PathVariable Long id) {
+        WalletResponse updatedWallet = walletService.updateWallet(walletRequest, id);
+        return ResponseEntity.ok(updatedWallet);
+    }
+
+    @GetMapping("/{walletId}/ledger")
+    public ResponseEntity<List<LedgerEntryResponse>> getWalletLedger(
+            @PathVariable Long walletId) {
+
+        return ResponseEntity.ok(
+                ledgerService.getWalletLedger(walletId)
+        );
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<WalletResponse> getWalletById(@PathVariable Long id) {
+        WalletResponse wallet = walletService.getWalletById(id);
+        return ResponseEntity.ok(wallet);
+    }
+
+
+    @GetMapping("/all")
+    public ResponseEntity<List<WalletResponse>> getAllWallets() {
+        List<WalletResponse> wallets = walletService.getallWallets();
+        return ResponseEntity.ok(wallets);
+    }
+
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteWallet(@PathVariable Long id) {
+        walletService.deleteWalletById(id);
+        return ResponseEntity.ok("Wallet deleted successfully");
+    }
+}
